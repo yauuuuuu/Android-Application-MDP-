@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+
+    <TextView
+        android:id="@+id/headerTitle"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="MDP Group 18"
+        android:textAllCaps="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textStyle="bold"
+        android:background="@color/headerBg"
+        android:gravity="center"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
+
+
+    <view
+        android:id="@+id/mapView"
+        class="com.example.mdp_group18.GridMap"
+        android:layout_width="430dp"
+        android:layout_height="430dp"
+        android:layout_margin="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerTitle" />
+
+    <TextView
+        android:id="@+id/bluetoothHeader"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Bluetooth"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:background="@drawable/rounded_rect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/mapView"
+        app:layout_constraintTop_toBottomOf="@id/headerTitle"
+        app:layout_constraintBottom_toTopOf="@id/bluetoothContent"/>
+
+    <View
+        android:id="@+id/bluetoothContent"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="2dp"
+        app:layout_constraintTop_toBottomOf="@id/bluetoothHeader"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/mapView"
+        app:layout_constraintBottom_toTopOf="@id/robotStatusHeader"
+        android:background="@drawable/textview_border" />
+
+    <TextView
+        android:id="@+id/bluetoothStatusText"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="@string/bluetooth_status"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_red_dark"
+        app:layout_constraintBottom_toTopOf="@id/bluetoothConnectedDevices"
+        app:layout_constraintEnd_toEndOf="@id/bluetoothContent"
+        app:layout_constraintStart_toStartOf="@id/bluetoothContent"
+        app:layout_constraintTop_toTopOf="@id/bluetoothContent" />
+
+    <TextView
+        android:id="@+id/bluetoothConnectedDevices"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="@string/connected_device_name"
+        android:textAlignment="center"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@id/bluetoothContent"
+        app:layout_constraintEnd_toEndOf="@id/bluetoothContent"
+        app:layout_constraintStart_toStartOf="@id/bluetoothContent"
+        app:layout_constraintTop_toBottomOf="@id/bluetoothStatusText" />
+
+    <TextView
+        android:id="@+id/robotStatusHeader"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Robot Status"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:background="@drawable/rounded_rect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/mapView"
+        app:layout_constraintTop_toBottomOf="@id/bluetoothContent"
+        app:layout_constraintBottom_toTopOf="@id/robotStatus"/>
+
+    <TextView
+        android:id="@+id/robotStatus"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/textview_border"
+        app:layout_constraintTop_toBottomOf="@id/robotStatusHeader"
+        app:layout_constraintStart_toEndOf="@id/mapView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/directionHeader"
+        android:text="@string/robot_status"
+        android:textAlignment="center"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/directionHeader"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Direction"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:background="@drawable/rounded_rect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/mapView"
+        app:layout_constraintTop_toBottomOf="@id/robotStatus"
+        app:layout_constraintBottom_toTopOf="@id/directionText"/>
+
+    <TextView
+        android:id="@+id/directionText"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/textview_border"
+        app:layout_constraintTop_toBottomOf="@id/directionHeader"
+        app:layout_constraintStart_toEndOf="@id/mapView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/coordinatesHeader"
+        android:text="@string/directionText"
+        android:textAlignment="center"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/coordinatesHeader"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Coordinates"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:background="@drawable/rounded_rect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/mapView"
+        app:layout_constraintTop_toBottomOf="@id/directionText"
+        app:layout_constraintBottom_toTopOf="@id/coordinatesContent"/>
+
+    <View
+        android:id="@+id/coordinatesContent"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="2dp"
+        app:layout_constraintTop_toBottomOf="@id/coordinatesHeader"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/mapView"
+        app:layout_constraintBottom_toBottomOf="@id/mapView"
+        android:background="@drawable/textview_border" />
+
+    <TextView
+        android:id="@+id/coordinatesTextX"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:text="X: %d"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/coordinatesTextY"
+        app:layout_constraintStart_toStartOf="@id/coordinatesContent"
+        app:layout_constraintTop_toTopOf="@id/coordinatesContent" />
+
+    <TextView
+        android:id="@+id/coordinatesTextY"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:text="Y: %d"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/coordinatesContent"
+        app:layout_constraintStart_toEndOf="@id/coordinatesTextX"
+        app:layout_constraintTop_toTopOf="@id/coordinatesContent" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="430dp"
+        android:layout_height="430dp"
+        android:layout_margin="10dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintStart_toStartOf="@id/mapView"
+        app:layout_constraintEnd_toEndOf="@id/mapView"
+        app:layout_constraintTop_toBottomOf="@id/mapView">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabIndicatorAnimationMode="elastic"
+            app:tabIndicatorColor="@color/tabColor"
+            app:tabMode="fixed"
+            app:tabRippleColor="@color/headerBg"
+            app:tabSelectedTextColor="@color/tabColor"
+            app:tabTextColor="@color/black">
+
+        </com.google.android.material.tabs.TabLayout>
+    </androidx.viewpager.widget.ViewPager>
+
+    <LinearLayout
+        android:id="@+id/bluetoothButtonContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/coordinatesContent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/mapView"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/upButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:maxWidth="60dp"
+            android:maxHeight="60dp"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/up_arrow" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/leftButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:maxWidth="60dp"
+                android:maxHeight="60dp"
+                android:scaleType="fitXY"
+                android:rotation="270"
+                android:background="?android:selectableItemBackgroundBorderless"
+                android:layout_marginRight="5dp"
+                app:srcCompat="@drawable/up_arrow" />
+
+            <ImageButton
+                android:id="@+id/rightButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:maxWidth="60dp"
+                android:maxHeight="60dp"
+                android:scaleType="fitXY"
+                android:rotation="90"
+                android:background="?android:selectableItemBackgroundBorderless"
+                android:layout_marginLeft="5dp"
+                app:srcCompat="@drawable/up_arrow" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/downButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:maxWidth="60dp"
+            android:maxHeight="60dp"
+            android:scaleType="fitXY"
+            android:rotation="180"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/up_arrow" />
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/bluetoothButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/bluetoothBlue"
+        android:drawableLeft="@drawable/bluetooth"
+        android:onClick="bluetoothPopup"
+        android:padding="10dp"
+        android:text="Bluetooth"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/viewPager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.428"
+        app:layout_constraintStart_toEndOf="@id/viewPager" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

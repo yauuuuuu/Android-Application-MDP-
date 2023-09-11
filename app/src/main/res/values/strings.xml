@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">MDP_Group18</string>
+
+    <!-- Map -->
+    <string name="manual">MANUAL</string>
+    <string name="auto">AUTO</string>
+    <string name="status_not_available">Not Available</string>
+    <string name="image_rec_end">Image Rec Completed</string>
+    <string name="fastest_car_end">Fastest Car Completed</string>
+    <string name="bt_disconnect">Disconnected</string>
+    <string name="bt_connected">Connected</string>
+    <string name="img_rec_stop">Image Recognition Completed</string>
+    <string name="img_rec_start">Image Recognition Started</string>
+    <string name="fastest_car_stop">Fastest Car Completed</string>
+    <string name="fastest_car_start">Fastest Car Started</string>
+    <string name="timer_default_val">00:00</string>
+    <string name="robot_status_na">Not Available</string>
+
+    <string name="bluetooth_status">Not Connected</string>
+    <string name="robot_status">Not Ready</string>
+    <string name="connected_device_name">(Connected Device)</string>
+    <string name="directionText">None</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
