@@ -1,16 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MapConfigurationTabFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"
-        android:background="@color/betterPurple"
-        android:textColor="@color/white"/>
+    <LinearLayout
+        android:layout_width="400dp"
+        android:layout_height="350dp"
+        android:orientation="vertical">
 
-</FrameLayout>
+        <ToggleButton
+            android:id="@+id/setRobotBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:textOff="SET ROBOT"
+            android:background="@drawable/rounded_rect"
+            android:textOn="CANCEL"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/updateRobotDirectionBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Update Robot Direction"
+            android:padding="5dp"
+            android:background="@drawable/rounded_rect"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"/>
+
+        <ToggleButton
+            android:id="@+id/setObstacleBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:button="@null"
+            android:textOff="SET OBSTACLE(S)"
+            android:textOn="CANCEL"
+            android:padding="5dp"
+            android:background="@drawable/rounded_rect"
+            android:checked="false"
+            android:layout_marginTop="10dp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:background="@drawable/textview_border"
+                android:layout_gravity="center">
+
+                <LinearLayout
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="center">
+                    <TextView
+                        android:id="@+id/textView_updateObstacle"
+                        android:layout_width="115dp"
+                        android:layout_height="24dp"
+                        android:textColor="@color/colorBlack"
+                        android:text="Update Obstacle: " />
+
+                    <Switch
+                        android:id="@+id/updateObstacleSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_gravity="center">
+                    <TextView
+                        android:id="@+id/textView_drag"
+                        android:layout_width="34dp"
+                        android:textColor="@color/colorBlack"
+                        android:layout_height="wrap_content"
+                        android:text="Drag: " />
+
+                    <Switch
+                        android:id="@+id/dragSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="97dp" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/mapResetBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/refresh"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"/>
+
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

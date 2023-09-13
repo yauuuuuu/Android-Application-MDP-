@@ -1,64 +1,177 @@
 package com.example.mdp_group18;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.Switch;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MapConfigurationTabFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class MapConfigurationTabFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "MapFragment";
+    SharedPreferences mapPref;
+    private static SharedPreferences.Editor editor;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public MapConfigurationTabFragment() {
-        // Required empty public constructor
+    ImageButton mapResetBtn;
+    ToggleButton setRobotBtn, setObstacleBtn;
+    GridMap gridMap;
+    Switch dragSwitch, updateObstacleSwitch;
+    Button updateRobotDirectionBtn;
+    static boolean dragStatus;
+    static boolean changeObstacleStatus;
+    private MainActivity mainActivity;
+    public MapConfigurationTabFragment(MainActivity main) {
+        this.mainActivity = main;
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment mapConfigurationTabFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MapConfigurationTabFragment newInstance(String param1, String param2) {
-        MapConfigurationTabFragment fragment = new MapConfigurationTabFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_map_configuration_tab, container, false);
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.fragment_map_configuration_tab, container, false);
+
+
+        gridMap = this.mainActivity.getGridMap();
+
+        final DirectionFragment directionFragment = new DirectionFragment();
+
+        mapResetBtn = root.findViewById(R.id.mapResetBtn);
+        setRobotBtn = root.findViewById(R.id.setRobotBtn);
+        updateRobotDirectionBtn = root.findViewById(R.id.updateRobotDirectionBtn);
+        setObstacleBtn = root.findViewById(R.id.setObstacleBtn);
+        updateObstacleSwitch = root.findViewById(R.id.updateObstacleSwitch);
+        dragSwitch = root.findViewById(R.id.dragSwitch);
+
+
+        mapResetBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showLog("Clicked resetMapBtn");
+                showToast("Reseting map...");
+                gridMap.resetMap(true);
+            }
+        });
+
+
+        // switch for dragging
+        dragSwitch.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
+                showToast("Dragging is " + (isChecked ? "on" : "off"));
+                dragStatus = isChecked;
+                if (dragStatus) {
+                    gridMap.setSetObstacleStatus(false);
+                    if (setRobotBtn.isChecked()) {
+                        setRobotBtn.toggle();
+                    }
+                    if (setObstacleBtn.isChecked()) {
+                        setObstacleBtn.toggle();
+                    }
+                    updateObstacleSwitch.setChecked(false);
+                }
+            }
+        });
+
+
+        // switch for changing obstacle
+        updateObstacleSwitch.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
+                showToast("Changing Obstacle is " + (isChecked ? "on" : "off"));
+                changeObstacleStatus = isChecked;
+                if (changeObstacleStatus) {
+                    gridMap.setSetObstacleStatus(false);
+                    if (setRobotBtn.isChecked()) {
+                        setRobotBtn.toggle();
+                    }
+                    if (setObstacleBtn.isChecked()) {
+                        setObstacleBtn.toggle();
+                    }
+                    dragSwitch.setChecked(false);
+                }
+            }
+        });
+
+        setRobotBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showLog("Clicked setStartPointToggleBtn");
+                if (setRobotBtn.getText().equals("SET START POINT")) {
+                    gridMap.setCanDrawRobot(false);
+                    gridMap.setStartCoordStatus(false);
+                    gridMap.toggleCheckedBtn("setRobotBtn");
+                }
+                else if (setRobotBtn.getText().equals("CANCEL")) {
+                    gridMap.setStartCoordStatus(true);
+                    gridMap.setCanDrawRobot(true);
+                    gridMap.toggleCheckedBtn("setRobotBtn");
+                }
+                setObstacleBtn.setChecked(false);
+                dragSwitch.setChecked(false);
+            }
+        });
+
+        updateRobotDirectionBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showLog("Clicked directionChangeImageBtn");
+                directionFragment.show(getActivity().getFragmentManager(),
+                        "Direction Fragment");
+                showLog("Exiting directionChangeImageBtn");
+            }
+        });
+
+        setObstacleBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showLog("Clicked obstacleImageBtn");
+
+                if (!gridMap.getSetObstacleStatus()) {
+                    showToast("Please plot obstacles");
+                    gridMap.setSetObstacleStatus(true);
+                    gridMap.toggleCheckedBtn("obstacleImageBtn");
+                }
+                else {
+                    int numObstacles = gridMap.getObstacleCoord().size();
+                    showToast(numObstacles + " obstacles plotted");
+                    gridMap.setSetObstacleStatus(false);
+                }
+
+                updateObstacleSwitch.setChecked(false);
+                dragSwitch.setChecked(false);
+                showLog("obstacle status = " + gridMap.getSetObstacleStatus());
+                showLog("Exiting obstacleImageBtn");
+            }
+        });
+
+
+
+        return root;
+    }
+
+    private void showLog(String message) {
+        Log.d(TAG, message);
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 }

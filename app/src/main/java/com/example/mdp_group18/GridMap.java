@@ -1,9 +1,14 @@
 package com.example.mdp_group18;
 
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,7 +16,16 @@ import android.graphics.Point;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
 
@@ -50,11 +64,8 @@ public class GridMap extends View {
                 case "waypoint":
                     this.paint = waypointColor;
                     break;
-                case "unexplored":
-                    this.paint = unexploredColor;
-                    break;
-                case "explored":
-                    this.paint = exploredColor;
+                case "tile":
+                    this.paint = tileColor;
                     break;
                 case "arrow":
                     this.paint = arrowColor;
@@ -92,8 +103,7 @@ public class GridMap extends View {
     private final Paint endColor = new Paint();
     private final Paint startColor = new Paint();
     private final Paint waypointColor = new Paint();
-    private final Paint unexploredColor = new Paint();
-    private final Paint exploredColor = new Paint();
+    private final Paint tileColor = new Paint();
     private final Paint arrowColor = new Paint();
     private final Paint fastestPathColor = new Paint();
     private String robotDirection = "None";
@@ -136,8 +146,7 @@ public class GridMap extends View {
         this.endColor.setColor(Color.RED);
         this.startColor.setColor(Color.CYAN);
         this.waypointColor.setColor(Color.GREEN);
-        this.unexploredColor.setColor(getResources().getColor(R.color.lightBlue));
-        this.exploredColor.setColor(getResources().getColor(R.color.exploredColor2));
+        this.tileColor.setColor(getResources().getColor(R.color.tileColor));
         this.arrowColor.setColor(Color.BLACK);
         this.fastestPathColor.setColor(Color.MAGENTA);
         this.startCoord = new int[]{-1, -1};
@@ -187,11 +196,11 @@ public class GridMap extends View {
         this.drawIndividualCell(canvas);
         this.drawGridLines(canvas);
         this.drawGridNumber(canvas);
-    /***
+
         if (this.getCanDrawRobot())
             this.drawRobot(canvas, curCoord);
         this.drawObstacles(canvas);
-     ***/
+
     }
 
     private void createCell() {
@@ -201,12 +210,12 @@ public class GridMap extends View {
         for (int x = 0; x <= COL; x++)
             for (int y = 0; y <= ROW; y++)
                 cells[x][y] = new Cell(
-                        x * cellSize + (cellSize / 30),
-                        y * cellSize + (cellSize / 30),
-                        (x + 1) * cellSize,
-                        (y + 1) * cellSize,
-                        unexploredColor,
-                        "unexplored"
+                    x * cellSize + (cellSize / 30),
+                    y * cellSize + (cellSize / 30),
+                    (x + 1) * cellSize,
+                    (y + 1) * cellSize,
+                    tileColor,
+                    "tile"
                 );
     }
 
@@ -290,7 +299,7 @@ public class GridMap extends View {
     public void setCanDrawRobot(boolean canDrawRobot) {
         this.canDrawRobot = canDrawRobot;
     }
-/***
+
     private void drawRobot(Canvas canvas, int[] curCoord) {
         float xCoord, yCoord;
         BitmapFactory.Options op = new BitmapFactory.Options();
@@ -312,7 +321,7 @@ public class GridMap extends View {
                     } else {
                         xCoord = cells[robotX][20 - robotY].startX;
                         yCoord = cells[robotX][20 - robotY].startY;
-                        bm = BitmapFactory.decodeResource(getResources(),R.drawable.car_face_up, op);
+                        bm = BitmapFactory.decodeResource(getResources(),R.drawable.car_up, op);
                         mapscalable = Bitmap.createScaledBitmap(bm, 51,51, true);
                         canvas.drawBitmap(mapscalable, xCoord, yCoord, null);
                     }
@@ -327,9 +336,9 @@ public class GridMap extends View {
                         ).show();
                         this.setCanDrawRobot(false);
                     } else {
-                        xCoord = cells[robotX - 1][20 - (robotY + 1)].startX;
-                        yCoord = cells[robotX - 1][20 - (robotY + 1)].startY;
-                        bm = BitmapFactory.decodeResource(getResources(),R.drawable.car_face_down, op);
+                        xCoord = cells[robotX][20 - (robotY)].startX;
+                        yCoord = cells[robotX][20 - (robotY)].startY;
+                        bm = BitmapFactory.decodeResource(getResources(),R.drawable.car_down, op);
                         mapscalable = Bitmap.createScaledBitmap(bm, 51,51, true);
                         canvas.drawBitmap(mapscalable, xCoord, yCoord, null);
 
@@ -344,9 +353,9 @@ public class GridMap extends View {
                         ).show();
                         this.setCanDrawRobot(false);
                     } else {
-                        xCoord = cells[robotX - 1][20 - robotY].startX;
-                        yCoord = cells[robotX - 1][20 - robotY].startY;
-                        bm = BitmapFactory.decodeResource(getResources(),R.drawable.car_face_right, op);
+                        xCoord = cells[robotX ][20 - robotY].startX;
+                        yCoord = cells[robotX ][20 - robotY].startY;
+                        bm = BitmapFactory.decodeResource(getResources(),R.drawable.car_right, op);
                         mapscalable = Bitmap.createScaledBitmap(bm, 51,51, true);
                         canvas.drawBitmap(mapscalable, xCoord, yCoord, null);
                     }
@@ -361,9 +370,9 @@ public class GridMap extends View {
                         ).show();
                         this.setCanDrawRobot(false);
                     } else {
-                        xCoord = cells[robotX][20 - (robotY - 1)].startX;
-                        yCoord = cells[robotX][20 - (robotY + 1)].startY;
-                        bm = BitmapFactory.decodeResource(getResources(),R.drawable.car_face_left, op);
+                        xCoord = cells[robotX][20 - (robotY )].startX;
+                        yCoord = cells[robotX][20 - (robotY )].startY;
+                        bm = BitmapFactory.decodeResource(getResources(),R.drawable.car_left, op);
                         mapscalable = Bitmap.createScaledBitmap(bm, 51,51, true);
                         canvas.drawBitmap(mapscalable, xCoord, yCoord, null);
                     }
@@ -453,7 +462,7 @@ public class GridMap extends View {
             }
         }
     }
-***/
+
     public String getRobotDirection() {
         return robotDirection;
     }
@@ -473,7 +482,7 @@ public class GridMap extends View {
     private boolean getStartCoordStatus() {
         return startCoordStatus;
     }
-/***
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -481,10 +490,10 @@ public class GridMap extends View {
             this.initialRow = this.convertRow((int) (event.getY() / cellSize));
             String obstacleID;
             String obstacleBearing;
-            ToggleButton setStartPointToggleBtn = ((Activity)this.getContext())
-                    .findViewById(R.id.startpointToggleBtn);
+            ToggleButton setRobotBtn = ((Activity)this.getContext())
+                    .findViewById(R.id.setRobotBtn);
 
-            if (MapTabFragment.dragStatus) {
+            if (MapConfigurationTabFragment.dragStatus) {
                 // if the drag location has no obstacles, do nothing
                 if (this.getObstacleID(this.initialColumn, this.initialRow).equals("")) {
                     return false;
@@ -494,7 +503,7 @@ public class GridMap extends View {
             }
 
             // start change obstacle
-            if (MapTabFragment.changeObstacleStatus) {
+            if (MapConfigurationTabFragment.changeObstacleStatus) {
                 obstacleID = this.getObstacleID(this.initialColumn, this.initialRow);
                 obstacleBearing = this.getImageBearing(this.initialColumn, this.initialRow);
                 // if touch on empty cell, do nothing
@@ -508,17 +517,17 @@ public class GridMap extends View {
                     View mView = ((Activity) this.getContext()).getLayoutInflater()
                             .inflate(R.layout.activity_dialog_change_obstacle,
                                     null);
-                    mBuilder.setTitle("Change Existing Obstacle ID/Bearing");
-                    final Spinner mIDSpinner = mView.findViewById(R.id.imageIDSpinner2);
-                    final Spinner mBearingSpinner = mView.findViewById(R.id.bearingSpinner2);
+                    mBuilder.setTitle("Update Existing Obstacle ID/ Direction");
+                    final Spinner mIDSpinner = mView.findViewById(R.id.obstacleIDSpinner);
+                    final Spinner mBearingSpinner = mView.findViewById(R.id.obstacleDirectionSpinner);
 
                     ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                            this.getContext(), R.array.imageID_array,
+                            this.getContext(), R.array.obstacleID_array,
                             android.R.layout.simple_spinner_item);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     mIDSpinner.setAdapter(adapter);
                     ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(
-                            this.getContext(), R.array.imageBearing_array,
+                            this.getContext(), R.array.obstacleDirection_array,
                             android.R.layout.simple_spinner_item);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     mBearingSpinner.setAdapter(adapter2);
@@ -619,8 +628,8 @@ public class GridMap extends View {
                     this.setStartCoord(initialColumn, initialRow);
                     this.startCoordStatus = false;
                     this.updateRobotAxis(this.initialColumn, this.initialRow, direction);
-                    if (setStartPointToggleBtn.isChecked())
-                        setStartPointToggleBtn.toggle();
+                    if (setRobotBtn.isChecked())
+                        setRobotBtn.toggle();
                 }
 
                 this.invalidate();
@@ -639,14 +648,13 @@ public class GridMap extends View {
         }
         return false;
     }
-***/
 
     /**
      * Sets the starting coordinate of the robot
      * @param col The starting x-coord of the robot
      * @param row The starting y-coord of the robot
      */
-/***
+
     public void setStartCoord(int col, int row) {
         String direction = this.getRobotDirection();
         if (direction.equals("None")) {
@@ -693,15 +701,15 @@ public class GridMap extends View {
         if (this.getStartCoordStatus())
             this.setCurCoord(col, row, direction);
     }
-***/
+
 
     /**
-     * Sets the current coordinate of the robot, and mark areas visited as explored cells
+     * Sets the current coordinate of the robot
      * @param col The current x-coord of the robot
      * @param row The current y-coord of the robot
      * @param direction The current direction of the robot
      */
-/***
+
     public void setCurCoord(int col, int row, String direction) {
         if (col < 1 || col > 20 || row < 1 || row > 20) {
             return;
@@ -739,7 +747,7 @@ public class GridMap extends View {
                 break;
         }
     }
-***/
+
 
     /**
      * Gets the current coordinate of the robot
@@ -773,18 +781,20 @@ public class GridMap extends View {
      * @param row The initial y-coord of the robot
      * @param direction The initial direction of the robot
      */
-/***
-    private void updateRobotAxis(int col, int row, String direction) {
-        TextView xAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.xAxisTextView);
-        TextView yAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.yAxisTextView);
-        TextView directionAxisTextView =  ((Activity)this.getContext())
-                .findViewById(R.id.directionAxisTextView);
 
-        xAxisTextView.setText(String.format(Integer.toString(col)));
-        yAxisTextView.setText(String.format(Integer.toString(row)));
+    private void updateRobotAxis(int col, int row, String direction) {
+        TextView xAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.coordinatesTextX);
+        TextView yAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.coordinatesTextY);
+        TextView directionAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.directionText);
+
+        String xCoord = getContext().getString(R.string.xCoordinate, Integer.toString(col));
+        String yCoord = getContext().getString(R.string.yCoordinate, Integer.toString(row));
+
+        xAxisTextView.setText(xCoord);
+        yAxisTextView.setText(yCoord);
         directionAxisTextView.setText(direction);
     }
-***/
+
 
     /**
      * Registers an obstacle at [col, row]
@@ -891,36 +901,36 @@ public class GridMap extends View {
                 obstacleY = currentObstacle[1];
                 this.setObstacleID("", obstacleX, obstacleY);
                 this.setImageBearing("", obstacleX, obstacleY);
-                this.updateCells("unexplored", obstacleX, obstacleY);
+                this.updateCells("tile", obstacleX, obstacleY);
                 this.getObstacleCoord().remove(currentObstacle);
                 return;
             }
         }
     }
-/***
-    public void toggleCheckedBtn(String buttonName) {
-        ToggleButton setStartPointToggleBtn = ((Activity)this.getContext())
-                .findViewById(R.id.startpointToggleBtn);
-        ToggleButton obstacleImageBtn = ((Activity)this.getContext())
-                .findViewById(R.id.addObstacleBtn);
 
-        if (!buttonName.equals("setStartPointToggleBtn"))
-            if (setStartPointToggleBtn.isChecked()) {
+    public void toggleCheckedBtn(String buttonName) {
+        ToggleButton setRobotBtn = ((Activity)this.getContext())
+                .findViewById(R.id.setRobotBtn);
+        ToggleButton setObstacleBtn = ((Activity)this.getContext())
+                .findViewById(R.id.setObstacleBtn);
+
+        if (!buttonName.equals("setRobotBtn"))
+            if (setRobotBtn.isChecked()) {
                 this.setStartCoordStatus(false);
-                setStartPointToggleBtn.toggle();
+                setRobotBtn.toggle();
             }
         if (!buttonName.equals("obstacleImageBtn"))
-            if (obstacleImageBtn.isChecked()) {
+            if (setObstacleBtn.isChecked()) {
                 this.setSetObstacleStatus(false);
-                obstacleImageBtn.toggle();
+                setObstacleBtn.toggle();
             }
     }
-***/
+
 
     /**
      * Resets the map
      */
-/***
+
     public void resetMap(boolean hardReset) {
         TextView robotStatusTextView =  ((Activity)this.getContext())
                 .findViewById(R.id.robotStatus);
@@ -945,7 +955,7 @@ public class GridMap extends View {
         }
         this.invalidate();
     }
-***/
+
 
     /**
      * Main driver function to move the robot
@@ -1143,12 +1153,32 @@ public class GridMap extends View {
         return true;
     }
 
+    /**
+     * Retrieves all obstacles currently on the map, pre-process them into a String to be sent over to RPI
+     * @return Pre-processed Sring. Format: x-coord,y-coord,N/S/E/W,obstacleID|x-coord,y-coord,N/S/E/W,obstacleID|...
+     */
+    public String getAllObstacles() {
+        StringBuilder message = new StringBuilder();
+        for (int i = 0; i < this.getObstacleCoord().size(); i ++) {
+            int[] currentObstacle = this.getObstacleCoord().get(i);
+            String imageBearing = IMAGE_BEARING[currentObstacle[1] - 1][currentObstacle[0] - 1];
+
+            /*
+            message is in the following format:
+            x-coord,y-coord,N/S/E/W,obstacleID|x-coord,y-coord,N/S/E/W,obstacleID|...
+             */
+            message.append(currentObstacle[0]).append(",").append(currentObstacle[1])
+                    .append(",").append(imageBearing.charAt(0)).append(",")
+                    .append(currentObstacle[2]).append("|");
+        }
+        return message.toString();
+    }
+
     private static class MyDragShadowBuilder extends DragShadowBuilder {
         private Point mScaleFactor;
 
         // Defines the constructor for myDragShadowBuilder
         public MyDragShadowBuilder(View v) {
-            // Stores the View parameter passed to myDragShadowBuilder.
             super(v);
         }
 
@@ -1184,27 +1214,6 @@ public class GridMap extends View {
             getView().draw(canvas);
         }
 
-    }
-
-    /**
-     * Retrieves all obstacles currently on the map, pre-process them into a String to be sent over to RPI
-     * @return Pre-processed Sring. Format: x-coord,y-coord,N/S/E/W,obstacleID|x-coord,y-coord,N/S/E/W,obstacleID|...
-     */
-    public String getAllObstacles() {
-        StringBuilder message = new StringBuilder();
-        for (int i = 0; i < this.getObstacleCoord().size(); i ++) {
-            int[] currentObstacle = this.getObstacleCoord().get(i);
-            String imageBearing = IMAGE_BEARING[currentObstacle[1] - 1][currentObstacle[0] - 1];
-
-            /*
-            message is in the following format:
-            x-coord,y-coord,N/S/E/W,obstacleID|x-coord,y-coord,N/S/E/W,obstacleID|...
-             */
-            message.append(currentObstacle[0]).append(",").append(currentObstacle[1])
-                    .append(",").append(imageBearing.charAt(0)).append(",")
-                    .append(currentObstacle[2]).append("|");
-        }
-        return message.toString();
     }
 
     /**

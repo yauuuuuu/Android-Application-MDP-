@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="planets_array">
+        <item>up</item>
+        <item>down</item>
+        <item>left</item>
+        <item>right</item>
+    </string-array>
+
+    <string-array name="obstacleID_array">
+        <item>OB-0</item>
+        <item>OB-1</item>
+        <item>OB-2</item>
+        <item>OB-3</item>
+        <item>OB-4</item>
+        <item>OB-5</item>
+        <item>OB-6</item>
+        <item>OB-7</item>
+        <item>OB-8</item>
+    </string-array>
+
+    <string-array name="obstacleDirection_array">
+        <item>North</item>
+        <item>South</item>
+        <item>East</item>
+        <item>West</item>
+    </string-array>
+</resources>

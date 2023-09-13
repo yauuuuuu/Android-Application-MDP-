@@ -68,7 +68,7 @@ public class BluetoothChatTabFragment extends Fragment {
         // Set a click listener for the send button
         send.setOnClickListener(view -> {
 
-            if (!BluetoothConnectionService.mConnectionStatus){
+            if (BluetoothConnectionService.mState != BluetoothConnectionService.STATE_CONNECTED){
                 Toast.makeText(getContext(), "Please connect to a device first", Toast.LENGTH_SHORT).show();
             } else {
                 String sentText = "" + this.typeBoxEditText.getText().toString();

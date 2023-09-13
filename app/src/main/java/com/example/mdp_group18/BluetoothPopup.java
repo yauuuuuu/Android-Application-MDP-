@@ -12,6 +12,8 @@ import android.content.pm.PackageManager;
 import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,6 +26,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -36,7 +39,7 @@ public class BluetoothPopup extends AppCompatActivity implements AdapterView.OnI
     Button searchBtn;
     Button connectBtn;
     Button backBtn;
-    BluetoothConnectionService mBluetoothConnection;
+    BluetoothConnectionService mBluetoothConnection = null;
     BluetoothDevice mBTDevice;
     BluetoothAdapter btAdapter;
     private static final UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -74,6 +77,7 @@ public class BluetoothPopup extends AppCompatActivity implements AdapterView.OnI
 
         if (btAdapter.isEnabled()) {
             btSwitch.setChecked(true);
+            setupChat();
         } else {
             btSwitch.setChecked(false);
         }
@@ -100,6 +104,7 @@ public class BluetoothPopup extends AppCompatActivity implements AdapterView.OnI
                         registerReceiver(mBroadcastReceiver1, BTIntent);
 
                         compoundButton.setChecked(true);
+                        setupChat();
 
                         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
                         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
@@ -151,15 +156,13 @@ public class BluetoothPopup extends AppCompatActivity implements AdapterView.OnI
                 Toast.makeText(BluetoothPopup.this, "Please Select a Device before connecting.", Toast.LENGTH_SHORT).show();
             }
             else {
+
                 startConnection();
             }
         });
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BluetoothPopup.super.finish();
-            }
+        backBtn.setOnClickListener(view -> {
+           super.finish();
         });
     }
 
@@ -199,10 +202,24 @@ public class BluetoothPopup extends AppCompatActivity implements AdapterView.OnI
 
             mBTDevice = mPairedBTDevices.get(i);
             Log.d(TAG, "Attempting to Connect - Device: " + mBTDevice.getName());
-            mBluetoothConnection = new BluetoothConnectionService(BluetoothPopup.this);
         }
 
     }
+
+    /*
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mBluetoothConnection != null) {
+            // Only if the state is STATE_NONE, do we know that we haven't started already
+            if (mBluetoothConnection.getState() == mBluetoothConnection.STATE_NONE) {
+                // Start the Bluetooth chat services
+                mBluetoothConnection.start();
+            }
+        }
+    }
+    */
+
     @SuppressLint("MissingPermission")
     private void refreshPairedList(){
         mPairedBTDevices.clear();
@@ -217,12 +234,18 @@ public class BluetoothPopup extends AppCompatActivity implements AdapterView.OnI
     }
 
     public void startConnection(){
-        startBTConnection(mBTDevice,MY_UUID_INSECURE);
+        startBTConnection(mBTDevice);
     }
 
-    public void startBTConnection(BluetoothDevice device, UUID uuid){
+    public void startBTConnection(BluetoothDevice device){
         Log.d(TAG, "startBTConnection: Initialising RFCOMM Bluetooth Connection.");
-        mBluetoothConnection.startClient(device,uuid);
+        mBluetoothConnection.connect(device);
+    }
+
+    private void setupChat() {
+        Log.d(TAG, "setupChat()");
+        mBluetoothConnection = new BluetoothConnectionService(BluetoothPopup.this);
+        mBluetoothConnection.start();
     }
 
     private final BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
@@ -325,11 +348,20 @@ public class BluetoothPopup extends AppCompatActivity implements AdapterView.OnI
     protected void onDestroy() {
         Log.d(TAG, "onDestroy: called.");
         super.onDestroy();
-        unregisterReceiver(mBroadcastReceiver1);
-        unregisterReceiver(mBroadcastReceiver2);
-        unregisterReceiver(mBroadcastReceiver3);
-        unregisterReceiver(mBroadcastReceiver4);
+        try{
+            if (mBluetoothConnection != null){
+                mBluetoothConnection.stop();
+            }
+            unregisterReceiver(mBroadcastReceiver1);
+            unregisterReceiver(mBroadcastReceiver2);
+            unregisterReceiver(mBroadcastReceiver3);
+            unregisterReceiver(mBroadcastReceiver4);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
+
 
 }
 
