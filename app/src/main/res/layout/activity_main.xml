@@ -230,7 +230,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageButton
-            android:id="@+id/upButton"
+            android:id="@+id/forwardBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -247,7 +247,7 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/leftButton"
+                android:id="@+id/leftBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
@@ -260,7 +260,7 @@
                 app:srcCompat="@drawable/up_arrow" />
 
             <ImageButton
-                android:id="@+id/rightButton"
+                android:id="@+id/rightBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
@@ -274,7 +274,7 @@
         </LinearLayout>
 
         <ImageButton
-            android:id="@+id/downButton"
+            android:id="@+id/backBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"

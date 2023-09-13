@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -32,7 +33,10 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private GridMap gridMap;
+    private int[] curCoord;
+    private String direction;
     private TextView robotXCoordText, robotYCoordText, robotDirectionText;
+    private ImageButton forwardBtn, backBtn, leftBtn, rightBtn;
 
     BluetoothAdapter btAdaptor;
 
@@ -67,6 +71,12 @@ public class MainActivity extends AppCompatActivity {
 
         this.gridMap = findViewById(R.id.mapView);
 
+        // Set up Controls
+        this.forwardBtn = findViewById(R.id.forwardBtn);
+        this.rightBtn = findViewById(R.id.rightBtn);
+        this.backBtn = findViewById(R.id.backBtn);
+        this.leftBtn = findViewById(R.id.leftBtn);
+
         // Set up sharedPreferences
         this.context = getApplicationContext();
         this.sharedPreferences();
@@ -79,6 +89,22 @@ public class MainActivity extends AppCompatActivity {
         bluetoothButton.setOnClickListener(v -> {
             Intent popup = new Intent(MainActivity.this, BluetoothPopup.class);
             this.startActivity(popup);
+        });
+
+        forwardBtn.setOnClickListener(view -> {
+            moveRobotControl("forward");
+        });
+
+        backBtn.setOnClickListener(view -> {
+            moveRobotControl("back");
+        });
+
+        leftBtn.setOnClickListener(view -> {
+            moveRobotControl("left");
+        });
+
+        rightBtn.setOnClickListener(view -> {
+            moveRobotControl("right");
         });
     }
 
@@ -108,4 +134,98 @@ public class MainActivity extends AppCompatActivity {
         this.robotDirectionText.setText(this.sharedPreferences.getString("direction", ""));
     }
 
+    private void moveRobotControl(String control){
+
+        if (this.gridMap.getCanDrawRobot()) {
+            this.curCoord = this.gridMap.getCurCoord();
+            this.direction = this.gridMap.getRobotDirection();
+
+            switch (control){
+                case "forward":
+                    switch (this.direction) {
+                        case "up":
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] + 1}, 0);
+                            break;
+                        case "left":
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 1, this.curCoord[1]}, 0);
+                            break;
+                        case "down":
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] - 1}, 0);
+                            break;
+                        case "right":
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 1, this.curCoord[1]}, 0);
+                            break;
+                    }
+                    break;
+
+                case "back":
+                    switch (this.direction) {
+                        case "up":
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] - 1}, 0);
+                            break;
+                        case "left":
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 1, this.curCoord[1]}, 0);
+                            break;
+                        case "down":
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] + 1}, 0);
+                            break;
+                        case "right":
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 1, this.curCoord[1]}, 0);
+                            break;
+                    }
+                    break;
+
+                case "left":
+                    switch (this.direction) {
+                        case "up":
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 4, this.curCoord[1] + 1}, 90);
+                            break;
+                        case "left":
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 1, this.curCoord[1] - 4}, 90);
+                            break;
+                        case "down":
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 4, this.curCoord[1] - 1}, 90);
+                            break;
+                        case "right":
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 1, this.curCoord[1] + 4}, 90);
+                            break;
+                    }
+                    break;
+
+                case "right":
+                    switch (this.direction) {
+                        case "up":
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 4, this.curCoord[1] + 2}, -90);
+                            break;
+                        case "left":
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 2, this.curCoord[1] + 4}, -90);
+                            break;
+                        case "down":
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 4, this.curCoord[1] - 2}, -90);
+                            break;
+                        case "right":
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 2, this.curCoord[1] - 4}, -90);
+                            break;
+                    }
+                    break;
+            }
+
+            // refreshes the UI displayed coordinate of robot
+            this.refreshCoordinate();
+        }
+        else
+            Toast.makeText(this, "Please place robot on map to begin",Toast.LENGTH_SHORT).show();
+    }
+
+    public void refreshCoordinate() {
+
+        String xCoord = this.getString(R.string.xCoordinate, String.valueOf(this.gridMap.getCurCoord()[0]));
+        String yCoord = this.getString(R.string.yCoordinate, String.valueOf(this.gridMap.getCurCoord()[1]));
+
+        this.robotXCoordText.setText(xCoord);
+        this.robotYCoordText.setText(yCoord);
+        this.robotDirectionText.setText(this.sharedPreferences.getString("direction", ""));
+    }
+
 }
+
