@@ -24,6 +24,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
 
+import java.nio.charset.Charset;
+
 public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences sharedPreferences;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private String direction;
     private TextView robotXCoordText, robotYCoordText, robotDirectionText;
     private ImageButton forwardBtn, backBtn, leftBtn, rightBtn;
+    private static TextView bluetoothStatus, bluetoothDevice;
 
     BluetoothAdapter btAdaptor;
 
@@ -77,6 +80,10 @@ public class MainActivity extends AppCompatActivity {
         this.backBtn = findViewById(R.id.backBtn);
         this.leftBtn = findViewById(R.id.leftBtn);
 
+        // Bluetooth Status
+        MainActivity.bluetoothStatus = findViewById(R.id.bluetoothStatusText);
+        MainActivity.bluetoothDevice = findViewById(R.id.bluetoothConnectedDevices);
+
         // Set up sharedPreferences
         this.context = getApplicationContext();
         this.sharedPreferences();
@@ -84,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         this.editor.putString("direction", "None");
         this.editor.putString("connStatus", "Disconnected");
         this.editor.commit();
+
 
         Button bluetoothButton = findViewById(R.id.bluetoothButton);
         bluetoothButton.setOnClickListener(v -> {
@@ -116,14 +124,15 @@ public class MainActivity extends AppCompatActivity {
         return context.getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
     }
 
+
     public void bluetoothPopup(View view){
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View viewBluetoothPopup = layoutInflater.inflate(R.layout.bluetooth_popup, null);
         PopupWindow popupWindow = new PopupWindow(viewBluetoothPopup, 600, 900, true);
         popupWindow.showAtLocation(view, Gravity.CENTER,0,0);
         popupWindow.setAnimationStyle(R.style.popup_window_animation_phone);
-
     }
+
 
     public GridMap getGridMap() {
         return this.gridMap;
@@ -136,12 +145,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void moveRobotControl(String control){
 
+        String controlText;
+        byte[] bytes;
+
         if (this.gridMap.getCanDrawRobot()) {
             this.curCoord = this.gridMap.getCurCoord();
             this.direction = this.gridMap.getRobotDirection();
 
             switch (control){
                 case "forward":
+
+                    controlText = "f";
+                    bytes = controlText.getBytes(Charset.defaultCharset());
+                    BluetoothConnectionService.write(bytes);
+
                     switch (this.direction) {
                         case "up":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] + 1}, 0);
@@ -159,6 +176,11 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case "back":
+
+                    controlText = "r";
+                    bytes = controlText.getBytes(Charset.defaultCharset());
+                    BluetoothConnectionService.write(bytes);
+
                     switch (this.direction) {
                         case "up":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] - 1}, 0);
@@ -176,6 +198,11 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case "left":
+
+                    controlText = "tl";
+                    bytes = controlText.getBytes(Charset.defaultCharset());
+                    BluetoothConnectionService.write(bytes);
+
                     switch (this.direction) {
                         case "up":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0] - 4, this.curCoord[1] + 1}, 90);
@@ -193,6 +220,11 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case "right":
+
+                    controlText = "tr";
+                    bytes = controlText.getBytes(Charset.defaultCharset());
+                    BluetoothConnectionService.write(bytes);
+
                     switch (this.direction) {
                         case "up":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0] + 4, this.curCoord[1] + 2}, -90);
@@ -225,6 +257,14 @@ public class MainActivity extends AppCompatActivity {
         this.robotXCoordText.setText(xCoord);
         this.robotYCoordText.setText(yCoord);
         this.robotDirectionText.setText(this.sharedPreferences.getString("direction", ""));
+    }
+
+    public static TextView getBluetoothStatus() {
+        return bluetoothStatus;
+    }
+
+    public static TextView getConnectedDevice() {
+        return bluetoothDevice;
     }
 
 }

@@ -69,12 +69,12 @@ public class BluetoothChatTabFragment extends Fragment {
         send.setOnClickListener(view -> {
 
             if (BluetoothConnectionService.mState != BluetoothConnectionService.STATE_CONNECTED){
+                Log.d(TAG, "Connection Service State = " + BluetoothConnectionService.mState);
                 Toast.makeText(getContext(), "Please connect to a device first", Toast.LENGTH_SHORT).show();
             } else {
                 String sentText = "" + this.typeBoxEditText.getText().toString();
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("message", sharedPreferences
-                        .getString("message", "") + '\n' + sentText);
+                editor.putString("message", sharedPreferences.getString("message", "") + '\n' + sentText);
                 editor.apply();
                 this.messageReceivedTextView.append(sentText + "\n");
                 this.typeBoxEditText.setText("");

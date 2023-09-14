@@ -8,7 +8,9 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -32,9 +34,10 @@ public class BluetoothConnectionService {
     private UUID deviceUUID;
     ProgressDialog mProgressDialog;
     Context mContext;
+    Intent connectionStatus;
     public static int mState;
     // Constants that indicate the current connection state
-    public static final int STATE_NONE = 0;       // we're doing nothing
+    public static final int STATE_NONE = 0;       // doing nothing
     public static final int STATE_LISTEN = 1;     // now listening for incoming connections
     public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
@@ -290,6 +293,19 @@ public class BluetoothConnectionService {
         public ConnectedThread(BluetoothSocket socket) {
             Log.d(TAG, "ConnectedThread: Starting.");
 
+            connectionStatus = new Intent("ConnectionStatus");
+            connectionStatus.putExtra("Status", "connected");
+            connectionStatus.putExtra("Device", mDevice);
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(connectionStatus);
+            mState = STATE_CONNECTED;
+
+            TextView status = MainActivity.getBluetoothStatus();
+            status.setText(R.string.bt_connected);
+            status.setTextColor(Color.GREEN);
+
+            TextView device = MainActivity.getConnectedDevice();
+            device.setText(mDevice.getName());
+
             mSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
@@ -343,6 +359,16 @@ public class BluetoothConnectionService {
                     }
                 } catch (IOException e) {
                     Log.e(TAG, "Error reading input stream. "+e.getMessage());
+
+                    connectionStatus = new Intent("ConnectionStatus");
+                    connectionStatus.putExtra("Status", "disconnected");
+                    TextView status = MainActivity.getBluetoothStatus();
+                    status.setText(R.string.bt_disconnect);
+                    status.setTextColor(Color.RED);
+                    connectionStatus.putExtra("Device", mDevice);
+                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(connectionStatus);
+                    mState = STATE_CONNECTING;
+
                     connectionLost();
                     break;
                 }

@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.nfc.Tag;
 import android.os.Build;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -39,6 +41,7 @@ public class BluetoothPopup extends AppCompatActivity implements AdapterView.OnI
     Button searchBtn;
     Button connectBtn;
     Button backBtn;
+    TextView connStatusTextView;
     BluetoothConnectionService mBluetoothConnection = null;
     BluetoothDevice mBTDevice;
     BluetoothAdapter btAdapter;
@@ -49,6 +52,8 @@ public class BluetoothPopup extends AppCompatActivity implements AdapterView.OnI
     public DeviceListAdapter mPairedDeviceListAdapter;
     public ListView lvNewDevices;
     public ListView lvPairedDevices;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     @SuppressLint("MissingPermission")
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +79,9 @@ public class BluetoothPopup extends AppCompatActivity implements AdapterView.OnI
 
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(mBroadcastReceiver4, filter);
+
+        IntentFilter filter2 = new IntentFilter("ConnectionStatus");
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver5, filter2);
 
         if (btAdapter.isEnabled()) {
             btSwitch.setChecked(true);
@@ -162,8 +170,20 @@ public class BluetoothPopup extends AppCompatActivity implements AdapterView.OnI
         });
 
         backBtn.setOnClickListener(view -> {
+            editor = sharedPreferences.edit();
+            editor.putString("connStatus", connStatusTextView.getText().toString());
+            editor.commit();
+
            super.finish();
         });
+
+        connStatusTextView = findViewById(R.id.connStatusText);
+        connStatus ="Disconnected";
+        sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
+        if (sharedPreferences.contains("connStatus"))
+            connStatus = sharedPreferences.getString("connStatus", "");
+
+        connStatusTextView.setText(connStatus);
     }
 
     private void checkBTPermissions() {
@@ -345,17 +365,52 @@ public class BluetoothPopup extends AppCompatActivity implements AdapterView.OnI
         }
     };
 
+    private final BroadcastReceiver mBroadcastReceiver5 = new BroadcastReceiver() {
+        @SuppressLint("MissingPermission")
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            BluetoothDevice mDevice = intent.getParcelableExtra("Device");
+            String status = intent.getStringExtra("Status");
+            sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
+            editor = sharedPreferences.edit();
+
+            if(status.equals("connected")){
+
+                Log.d(TAG, "mBroadcastReceiver5: Device now connected to "+mDevice.getName());
+                Toast.makeText(BluetoothPopup.this, "Device now connected to "+mDevice.getName(), Toast.LENGTH_SHORT).show();
+                editor.putString("connStatus", "Connected to " + mDevice.getName());
+                connStatusTextView.setText("Connected to " + mDevice.getName());
+
+            }
+            else if(status.equals("disconnected")){
+                Log.d(TAG, "mBroadcastReceiver5: Disconnected from "+mDevice.getName());
+                Toast.makeText(BluetoothPopup.this, "Disconnected from "+mDevice.getName(), Toast.LENGTH_SHORT).show();
+                mBluetoothConnection = new BluetoothConnectionService(BluetoothPopup.this);
+//                mBluetoothConnection.startAcceptThread();
+
+
+                sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
+                editor = sharedPreferences.edit();
+                editor.putString("connStatus", "Disconnected");
+                TextView connStatusTextView = findViewById(R.id.connStatusText);
+                connStatusTextView.setText("Disconnected");
+
+                editor.commit();
+
+            }
+            editor.commit();
+        }
+    };
+
     protected void onDestroy() {
         Log.d(TAG, "onDestroy: called.");
         super.onDestroy();
         try{
-            if (mBluetoothConnection != null){
-                mBluetoothConnection.stop();
-            }
             unregisterReceiver(mBroadcastReceiver1);
             unregisterReceiver(mBroadcastReceiver2);
             unregisterReceiver(mBroadcastReceiver3);
             unregisterReceiver(mBroadcastReceiver4);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver5);
         } catch (Exception e){
             e.printStackTrace();
         }

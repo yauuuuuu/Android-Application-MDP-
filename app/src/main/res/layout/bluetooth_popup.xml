@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     android:background="#F8F0E3">
 
+    <TextView
+        android:id="@+id/connStatusText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="DISCONNECTED"
+        android:textColor="@color/design_default_color_primary_dark"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Switch
         android:id="@+id/bluetoothSwitchOnOff"
@@ -17,10 +29,10 @@
         android:textOff="Off"
         android:textOn="On"
         android:textStyle="bold"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/connStatusText" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/searchBtn"
