@@ -152,12 +152,15 @@ public class MainActivity extends AppCompatActivity {
             this.curCoord = this.gridMap.getCurCoord();
             this.direction = this.gridMap.getRobotDirection();
 
+
             switch (control){
                 case "forward":
 
-                    controlText = "f";
-                    bytes = controlText.getBytes(Charset.defaultCharset());
-                    BluetoothConnectionService.write(bytes);
+                    if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED){
+                        controlText = "f";
+                        bytes = controlText.getBytes(Charset.defaultCharset());
+                        BluetoothConnectionService.write(bytes);
+                    }
 
                     switch (this.direction) {
                         case "up":
@@ -177,9 +180,11 @@ public class MainActivity extends AppCompatActivity {
 
                 case "back":
 
-                    controlText = "r";
-                    bytes = controlText.getBytes(Charset.defaultCharset());
-                    BluetoothConnectionService.write(bytes);
+                    if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED) {
+                        controlText = "r";
+                        bytes = controlText.getBytes(Charset.defaultCharset());
+                        BluetoothConnectionService.write(bytes);
+                    }
 
                     switch (this.direction) {
                         case "up":
@@ -199,9 +204,11 @@ public class MainActivity extends AppCompatActivity {
 
                 case "left":
 
-                    controlText = "tl";
-                    bytes = controlText.getBytes(Charset.defaultCharset());
-                    BluetoothConnectionService.write(bytes);
+                    if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED) {
+                        controlText = "tl";
+                        bytes = controlText.getBytes(Charset.defaultCharset());
+                        BluetoothConnectionService.write(bytes);
+                    }
 
                     switch (this.direction) {
                         case "up":
@@ -221,9 +228,11 @@ public class MainActivity extends AppCompatActivity {
 
                 case "right":
 
-                    controlText = "tr";
-                    bytes = controlText.getBytes(Charset.defaultCharset());
-                    BluetoothConnectionService.write(bytes);
+                    if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED) {
+                        controlText = "tr";
+                        bytes = controlText.getBytes(Charset.defaultCharset());
+                        BluetoothConnectionService.write(bytes);
+                    }
 
                     switch (this.direction) {
                         case "up":
