@@ -61,16 +61,16 @@ public class DirectionFragment extends DialogFragment {
                 String direction = spinner.getSelectedItem().toString();
                 editor.putString("direction",direction);
                 switch (direction) {
-                    case "up":
+                    case "N":
                         GridMap.robotBearing = 90;
                         break;
-                    case "left":
+                    case "W":
                         GridMap.robotBearing = 180;
                         break;
-                    case "down":
+                    case "S":
                         GridMap.robotBearing = 270;
                         break;
-                    case "right":
+                    case "E":
                         GridMap.robotBearing = 0;
                         break;
                 }

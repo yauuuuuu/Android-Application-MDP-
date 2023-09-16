@@ -311,7 +311,7 @@ public class GridMap extends View {
         if (! (robotX == -1 && robotY == -1)) {
             op.inMutable = true;
             switch (this.getRobotDirection()) {
-                case "up":
+                case "N":
                     if (robotY < 2 || robotY > 20 || robotX < 1 || robotX > 19) {
                         Toast.makeText(
                                 this.getContext(),
@@ -328,7 +328,7 @@ public class GridMap extends View {
                     }
                     break;
 
-                case "down":
+                case "S":
                     if (robotY < 1 ||robotY > 19 || robotX < 2 || robotX > 20) {
                         Toast.makeText(
                                 this.getContext(),
@@ -345,7 +345,7 @@ public class GridMap extends View {
 
                     }
                     break;
-                case "right":
+                case "E":
                     if (robotY < 2 || robotY > 20 || robotX < 2 || robotX > 20) {
                         Toast.makeText(
                                 this.getContext(),
@@ -362,7 +362,7 @@ public class GridMap extends View {
                     }
                     break;
 
-                case "left":
+                case "W":
                     if (robotY < 1 || robotY > 19 ||robotX < 1 || robotX > 19) {
                         Toast.makeText(
                                 this.getContext(),
@@ -420,7 +420,7 @@ public class GridMap extends View {
 
                     // color the face direction
                     switch (IMAGE_BEARING[19 - i][j]) {
-                        case "North":
+                        case "N":
                             canvas.drawLine(
                                     cells[j + 1][20 - i].startX,
                                     cells[j + 1][i].startY,
@@ -429,7 +429,7 @@ public class GridMap extends View {
                                     greenPaint
                             );
                             break;
-                        case "South":
+                        case "S":
                             canvas.drawLine(
                                     cells[j + 1][20 - i].startX,
                                     cells[j + 1][i].startY + cellSize,
@@ -438,7 +438,7 @@ public class GridMap extends View {
                                     greenPaint
                             );
                             break;
-                        case "East":
+                        case "E":
                             canvas.drawLine(
                                     cells[j + 1][20 - i].startX + cellSize,
                                     cells[j + 1][i].startY,
@@ -447,7 +447,7 @@ public class GridMap extends View {
                                     greenPaint
                             );
                             break;
-                        case "West":
+                        case "W":
                             canvas.drawLine(
                                     cells[j + 1][20 - i].startX,
                                     cells[j + 1][i].startY,
@@ -535,13 +535,13 @@ public class GridMap extends View {
                     mIDSpinner.setSelection(Integer.parseInt(obstacleID.substring(2)));
 
                     switch (obstacleBearing) {
-                        case "North": mBearingSpinner.setSelection(0);
+                        case "N": mBearingSpinner.setSelection(0);
                             break;
-                        case "South": mBearingSpinner.setSelection(1);
+                        case "S": mBearingSpinner.setSelection(1);
                             break;
-                        case "East": mBearingSpinner.setSelection(2);
+                        case "E": mBearingSpinner.setSelection(2);
                             break;
-                        case "West": mBearingSpinner.setSelection(3);
+                        case "W": mBearingSpinner.setSelection(3);
                     }
 
                     final String oldID = obstacleID;
@@ -559,6 +559,7 @@ public class GridMap extends View {
                             invalidate();
                         }
                     });
+
 
                     // dismiss
                     mBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -583,32 +584,32 @@ public class GridMap extends View {
                 boolean flag = false;
                 if (this.canDrawRobot) {
                     if (direction.equals("None")) {
-                        direction = "up";
+                        direction = "N";
                     }
 
                     switch (direction) {
-                        case "up":
+                        case "N":
                             if (this.initialColumn > 0 && this.initialColumn < 20
                                     && this.initialRow > 1 && this.initialRow <= 20) {
                                 flag = true;
                             }
                             break;
 
-                        case "left":
+                        case "W":
                             if (this.initialColumn > 0 && this.initialColumn < 20
                                     && this.initialRow >= 1 && this.initialRow < 20) {
                                 flag = true;
                             }
                             break;
 
-                        case "right":
+                        case "E":
                             if (this.initialColumn > 1 && this.initialColumn <= 20
                                     && this.initialRow > 1 && this.initialRow <= 20) {
                                 flag = true;
                             }
                             break;
 
-                        case "down":
+                        case "S":
                             if (this.initialColumn > 1 && this.initialColumn <= 20
                                     && this.initialRow > 0 && this.initialRow < 20) {
                                 flag = true;
@@ -640,7 +641,7 @@ public class GridMap extends View {
             // add id and the image bearing, popup to ask for user input
             if (this.setObstacleStatus) {
                 if (this.initialRow <= 20 && this.initialColumn <= 20) {
-                    this.setImageBearing("North", this.initialColumn, this.initialRow);
+                    this.setImageBearing("N", this.initialColumn, this.initialRow);
                     this.addObstacleCoord(initialColumn, initialRow, "OB0");
 
                     if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED){
@@ -665,10 +666,10 @@ public class GridMap extends View {
     public void setStartCoord(int col, int row) {
         String direction = this.getRobotDirection();
         if (direction.equals("None")) {
-            direction = "up";
+            direction = "N";
         }
         switch (direction) {
-            case "up":
+            case "N":
                 if (col > 0 && col < 20 && row > 1 && row <= 20) {
                     this.startCoord[0] = col;
                     this.startCoord[1] = row;
@@ -677,7 +678,7 @@ public class GridMap extends View {
                 }
                 break;
 
-            case "left":
+            case "W":
                 if (col > 0 && col < 20 && row >= 1 && row < 20) {
                     this.startCoord[0] = col;
                     this.startCoord[1] = row;
@@ -686,7 +687,7 @@ public class GridMap extends View {
                 }
                 break;
 
-            case "right":
+            case "E":
                 if (col > 1 && col <= 20 && row > 1 && row <= 20) {
                     this.startCoord[0] = col;
                     this.startCoord[1] = row;
@@ -695,7 +696,7 @@ public class GridMap extends View {
                 }
                 break;
 
-            case "down":
+            case "S":
                 if (col > 1 && col <= 20 && row > 0 && row < 20) {
                     this.startCoord[0] = col;
                     this.startCoord[1] = row;
@@ -959,8 +960,8 @@ public class GridMap extends View {
         // facing N
         if (offset > 45 && offset <= 135) {
             if (nextCoord[1] <= 20 && nextCoord[1] > 1 && nextCoord[0] >= 1 && nextCoord[0] < 20
-                    && validMove(nextCoord, "up")) {
-                robotDirection = "up";
+                    && validMove(nextCoord, "N")) {
+                robotDirection = "N";
                 this.setCurCoord(nextCoord[0], nextCoord[1], robotDirection);
                 flag = true;
             }
@@ -968,8 +969,8 @@ public class GridMap extends View {
         // facing W
         else if (offset > 135 && offset <= 225) {
             if (nextCoord[1] < 20 && nextCoord[1] >= 1 && nextCoord[0] >= 1 && nextCoord[0] < 20
-                    && validMove(nextCoord, "left")) {
-                robotDirection = "left";
+                    && validMove(nextCoord, "W")) {
+                robotDirection = "W";
                 this.setCurCoord(nextCoord[0], nextCoord[1], robotDirection);
                 flag = true;
             }
@@ -977,8 +978,8 @@ public class GridMap extends View {
         // facing S
         else if (offset > 225 && offset < 315) {
             if (nextCoord[1] < 20 && nextCoord[1] >= 1 && nextCoord[0] > 1 && nextCoord[0] <= 20
-                    && validMove(nextCoord, "down")) {
-                robotDirection = "down";
+                    && validMove(nextCoord, "S")) {
+                robotDirection = "S";
                 this.setCurCoord(nextCoord[0], nextCoord[1], robotDirection);
                 flag = true;
             }
@@ -986,8 +987,8 @@ public class GridMap extends View {
         // facing E
         else {
             if (nextCoord[1] <= 20 && nextCoord[1] > 1 && nextCoord[0] > 1 && nextCoord[0] <= 20
-                    && validMove(nextCoord, "right")) {
-                robotDirection = "right";
+                    && validMove(nextCoord, "E")) {
+                robotDirection = "E";
                 this.setCurCoord(nextCoord[0], nextCoord[1], robotDirection);
                 flag = true;
             }
@@ -1033,25 +1034,25 @@ public class GridMap extends View {
             depending on the direction, the cells to be examined are different
              */
             switch (direction) {
-                case "up":
+                case "N":
                     if (robotCoord[1] - 1 <= obstacleY && obstacleY <= robotCoord[1]
                             && robotCoord[0] <= obstacleX && obstacleX <= robotCoord[0] + 1) {
                         return false;
                     }
                     break;
-                case "down":
+                case "S":
                     if (robotCoord[1] <= obstacleY && obstacleY <= robotCoord[1] + 1
                             && robotCoord[0] - 1 <= obstacleX && obstacleX <= robotCoord[0]) {
                         return false;
                     }
                     break;
-                case "left":
+                case "W":
                     if (robotCoord[0] <= obstacleX && obstacleX <= robotCoord[0] + 1
                             && robotCoord[1] <= obstacleY && obstacleY <= robotCoord[1] + 1) {
                         return false;
                     }
                     break;
-                case "right":
+                case "E":
                     if (robotCoord[0] - 1 <= obstacleX && obstacleX <= robotCoord[0]
                             && robotCoord[1] - 1 <= obstacleY && obstacleY <= robotCoord[1]) {
                         return false;

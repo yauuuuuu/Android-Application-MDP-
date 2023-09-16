@@ -175,16 +175,16 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     switch (this.direction) {
-                        case "up":
+                        case "N":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] + 1}, 0);
                             break;
-                        case "left":
+                        case "W":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0] - 1, this.curCoord[1]}, 0);
                             break;
-                        case "down":
+                        case "S":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] - 1}, 0);
                             break;
-                        case "right":
+                        case "E":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0] + 1, this.curCoord[1]}, 0);
                             break;
                     }
@@ -199,16 +199,16 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     switch (this.direction) {
-                        case "up":
+                        case "N":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] - 1}, 0);
                             break;
-                        case "left":
+                        case "W":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0] + 1, this.curCoord[1]}, 0);
                             break;
-                        case "down":
+                        case "S":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] + 1}, 0);
                             break;
-                        case "right":
+                        case "E":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0] - 1, this.curCoord[1]}, 0);
                             break;
                     }
@@ -223,16 +223,16 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     switch (this.direction) {
-                        case "up":
+                        case "N":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0] - 4, this.curCoord[1] + 1}, 90);
                             break;
-                        case "left":
+                        case "W":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0] - 1, this.curCoord[1] - 4}, 90);
                             break;
-                        case "down":
+                        case "S":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0] + 4, this.curCoord[1] - 1}, 90);
                             break;
-                        case "right":
+                        case "E":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0] + 1, this.curCoord[1] + 4}, 90);
                             break;
                     }
@@ -247,16 +247,16 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     switch (this.direction) {
-                        case "up":
+                        case "N":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0] + 4, this.curCoord[1] + 2}, -90);
                             break;
-                        case "left":
+                        case "W":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0] - 2, this.curCoord[1] + 4}, -90);
                             break;
-                        case "down":
+                        case "S":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0] - 4, this.curCoord[1] - 2}, -90);
                             break;
-                        case "right":
+                        case "E":
                             this.gridMap.moveRobot(new int[]{this.curCoord[0] + 2, this.curCoord[1] - 4}, -90);
                             break;
                     }
@@ -298,8 +298,8 @@ public class MainActivity extends AppCompatActivity {
      *
      * For updating robot coordinates/ direction:
      * ROBOT-[x-coord]-[y-coord]-[direction]
-     *   ex 1: ROBOT-4-6-up for moving robot to [4,6], facing N
-     *   ex 2: ROBOT-6-6-right for moving robot to [6,6], facing E
+     *   ex 1: ROBOT-4-6-N for moving robot to [4,6], facing N
+     *   ex 2: ROBOT-6-6-E for moving robot to [6,6], facing E
      *
      * For updating status of robot:
      * STATUS-[new status]
@@ -321,16 +321,16 @@ public class MainActivity extends AppCompatActivity {
                 int yPos = (int) Float.parseFloat(cmd[2]);
                 String direction = cmd[3].trim();
                 switch (direction) {
-                    case "up":
+                    case "N":
                         GridMap.robotBearing = 90;
                         break;
-                    case "left":
+                    case "W":
                         GridMap.robotBearing = 180;
                         break;
-                    case "down":
+                    case "S":
                         GridMap.robotBearing = 270;
                         break;
-                    case "right":
+                    case "E":
                         GridMap.robotBearing = 0;
                         break;
                 }
