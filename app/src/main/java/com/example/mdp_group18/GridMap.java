@@ -29,6 +29,7 @@ import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -306,7 +307,7 @@ public class GridMap extends View {
         Bitmap bm, mapscalable;
         int robotX = curCoord[0];
         int robotY = curCoord[1];
-
+        Log.d(TAG, "drawRobot: x = " + robotX + ", y = " + robotY + ", Direction = " + this.getRobotDirection());
         if (! (robotX == -1 && robotY == -1)) {
             op.inMutable = true;
             switch (this.getRobotDirection()) {
@@ -314,7 +315,7 @@ public class GridMap extends View {
                     if (robotY < 2 || robotY > 20 || robotX < 1 || robotX > 19) {
                         Toast.makeText(
                                 this.getContext(),
-                                "Error with drawing robot (out of bound)",
+                                "Error with drawing robot (out of bound). Direction = up",
                                 Toast.LENGTH_SHORT
                         ).show();
                         this.setCanDrawRobot(false);
@@ -331,7 +332,7 @@ public class GridMap extends View {
                     if (robotY < 1 ||robotY > 19 || robotX < 2 || robotX > 20) {
                         Toast.makeText(
                                 this.getContext(),
-                                "Error with drawing robot (out of bound)",
+                                "Error with drawing robot (out of bound). Direction = down",
                                 Toast.LENGTH_SHORT
                         ).show();
                         this.setCanDrawRobot(false);
@@ -348,7 +349,7 @@ public class GridMap extends View {
                     if (robotY < 2 || robotY > 20 || robotX < 2 || robotX > 20) {
                         Toast.makeText(
                                 this.getContext(),
-                                "Error with drawing robot (out of bound)",
+                                "Error with drawing robot (out of bound). Direction = right",
                                 Toast.LENGTH_SHORT
                         ).show();
                         this.setCanDrawRobot(false);
@@ -365,7 +366,7 @@ public class GridMap extends View {
                     if (robotY < 1 || robotY > 19 ||robotX < 1 || robotX > 19) {
                         Toast.makeText(
                                 this.getContext(),
-                                "Error with drawing robot (out of bound)",
+                                "Error with drawing robot (out of bound). Direction = left",
                                 Toast.LENGTH_SHORT
                         ).show();
                         this.setCanDrawRobot(false);
@@ -641,6 +642,12 @@ public class GridMap extends View {
                 if (this.initialRow <= 20 && this.initialColumn <= 20) {
                     this.setImageBearing("North", this.initialColumn, this.initialRow);
                     this.addObstacleCoord(initialColumn, initialRow, "OB0");
+
+                    if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED){
+                        String setObstacleText = "ADD," + "OB0" + ",(" + initialColumn + "," + initialRow + ")";
+                        byte[] bytes = setObstacleText.getBytes(Charset.defaultCharset());
+                        BluetoothConnectionService.write(bytes);
+                    }
                 }
                 this.invalidate();
                 return true;
@@ -826,6 +833,12 @@ public class GridMap extends View {
         // Drop outside of map entirely (anywhere on the screen)
         if (! dragEvent.getResult() && dragEvent.getAction() == DragEvent.ACTION_DRAG_ENDED) {
             this.removeObstacle(obstacleID, this.initialColumn, this.initialRow);
+
+            if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED){
+                String dragObstacleText = "SUB," + obstacleID;
+                byte[] bytes = dragObstacleText.getBytes(Charset.defaultCharset());
+                BluetoothConnectionService.write(bytes);
+            }
         }
 
         // Drop on the map (including the indices row and col)

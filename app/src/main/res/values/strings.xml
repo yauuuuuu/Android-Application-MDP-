@@ -17,7 +17,7 @@
     <string name="robot_status_na">Not Available</string>
 
     <string name="bluetooth_status">Not Connected</string>
-    <string name="robot_status">Not Ready</string>
+    <string name="robot_status">Pending Updates</string>
     <string name="connected_device_name">(Connected Device)</string>
     <string name="directionText">None</string>
     <!-- TODO: Remove or change this placeholder text -->

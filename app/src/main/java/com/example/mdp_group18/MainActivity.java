@@ -3,8 +3,10 @@ package com.example.mdp_group18;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.Image;
 import android.os.Bundle;
@@ -19,8 +21,10 @@ import android.widget.PopupWindow;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.fragment.app.FragmentActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
 
@@ -40,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView robotXCoordText, robotYCoordText, robotDirectionText;
     private ImageButton forwardBtn, backBtn, leftBtn, rightBtn;
     private static TextView bluetoothStatus, bluetoothDevice;
+    private TextView robotStatus;
 
     BluetoothAdapter btAdaptor;
 
@@ -84,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.bluetoothStatus = findViewById(R.id.bluetoothStatusText);
         MainActivity.bluetoothDevice = findViewById(R.id.bluetoothConnectedDevices);
 
+        // Robot Status
+        this.robotStatus = findViewById(R.id.robotStatus);
+
         // Set up sharedPreferences
         this.context = getApplicationContext();
         this.sharedPreferences();
@@ -92,6 +100,10 @@ public class MainActivity extends AppCompatActivity {
         this.editor.putString("connStatus", "Disconnected");
         this.editor.commit();
 
+        // Set up Message Receiver
+        LocalBroadcastManager
+                .getInstance(this)
+                .registerReceiver(messageReceiver, new IntentFilter("incomingMessage"));
 
         Button bluetoothButton = findViewById(R.id.bluetoothButton);
         bluetoothButton.setOnClickListener(v -> {
@@ -275,6 +287,61 @@ public class MainActivity extends AppCompatActivity {
     public static TextView getConnectedDevice() {
         return bluetoothDevice;
     }
+
+    /**
+     * Handles message sent from RPI
+     * Message format:
+     *
+     * For updating image ID during image rec:
+     * TARGET-[obstacle id]-[image id]
+     *  ex: TARGET-3-7 for obstacle 3 === image id 7
+     *
+     * For updating robot coordinates/ direction:
+     * ROBOT-[x-coord]-[y-coord]-[direction]
+     *   ex 1: ROBOT-4-6-up for moving robot to [4,6], facing N
+     *   ex 2: ROBOT-6-6-right for moving robot to [6,6], facing E
+     *
+     * For updating status of robot:
+     * STATUS-[new status]
+     *
+     * For signaling Android that task is completed
+     * ENDED
+     */
+    BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra("receivedMessage");
+            System.out.println("debug" + message);
+            if (message.contains("TARGET")) {
+                String[] cmd = message.split("-");
+                gridMap.updateImageID(cmd[1], cmd[2]);
+            } else if (message.contains("ROBOT")) {
+                String[] cmd = message.split("-");
+                int xPos = (int) Float.parseFloat(cmd[1]);
+                int yPos = (int) Float.parseFloat(cmd[2]);
+                String direction = cmd[3].trim();
+                switch (direction) {
+                    case "up":
+                        GridMap.robotBearing = 90;
+                        break;
+                    case "left":
+                        GridMap.robotBearing = 180;
+                        break;
+                    case "down":
+                        GridMap.robotBearing = 270;
+                        break;
+                    case "right":
+                        GridMap.robotBearing = 0;
+                        break;
+                }
+                gridMap.setCurCoord(xPos,yPos,direction);
+            } else if (message.contains("STATUS")){
+                String[] cmd = message.split("-");
+                String updateStatus =  cmd[1];
+                robotStatus.setText(updateStatus);
+            }
+        }
+    };
 
 }
 
