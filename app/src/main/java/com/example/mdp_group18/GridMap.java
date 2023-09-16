@@ -126,6 +126,7 @@ public class GridMap extends View {
     static ClipData clipData;
     static Object localState;
     int initialColumn, initialRow;
+    public int obstacleCounter = 0;
 
     public GridMap(Context c) {
         super(c);
@@ -417,46 +418,46 @@ public class GridMap extends View {
                             cells[j + 1][i].startY + ((cells[1][1].endY - cells[1][1].startY) / 2) + 10,
                             textPaint
                     );
+                }
 
                     // color the face direction
-                    switch (IMAGE_BEARING[19 - i][j]) {
-                        case "N":
-                            canvas.drawLine(
-                                    cells[j + 1][20 - i].startX,
-                                    cells[j + 1][i].startY,
-                                    cells[j + 1][20 - i].endX,
-                                    cells[j + 1][i].startY,
-                                    greenPaint
-                            );
-                            break;
-                        case "S":
-                            canvas.drawLine(
-                                    cells[j + 1][20 - i].startX,
-                                    cells[j + 1][i].startY + cellSize,
-                                    cells[j + 1][20 - i].endX,
-                                    cells[j + 1][i].startY + cellSize,
-                                    greenPaint
-                            );
-                            break;
-                        case "E":
-                            canvas.drawLine(
-                                    cells[j + 1][20 - i].startX + cellSize,
-                                    cells[j + 1][i].startY,
-                                    cells[j + 1][20 - i].startX + cellSize,
-                                    cells[j + 1][i].endY,
-                                    greenPaint
-                            );
-                            break;
-                        case "W":
-                            canvas.drawLine(
-                                    cells[j + 1][20 - i].startX,
-                                    cells[j + 1][i].startY,
-                                    cells[j + 1][20 - i].startX,
-                                    cells[j + 1][i].endY,
-                                    greenPaint
-                            );
-                            break;
-                    }
+                switch (IMAGE_BEARING[19 - i][j]) {
+                    case "N":
+                        canvas.drawLine(
+                                cells[j + 1][20 - i].startX,
+                                cells[j + 1][i].startY,
+                                cells[j + 1][20 - i].endX,
+                                cells[j + 1][i].startY,
+                                greenPaint
+                        );
+                        break;
+                    case "S":
+                        canvas.drawLine(
+                                cells[j + 1][20 - i].startX,
+                                cells[j + 1][i].startY + cellSize,
+                                cells[j + 1][20 - i].endX,
+                                cells[j + 1][i].startY + cellSize,
+                                greenPaint
+                        );
+                        break;
+                    case "E":
+                        canvas.drawLine(
+                                cells[j + 1][20 - i].startX + cellSize,
+                                cells[j + 1][i].startY,
+                                cells[j + 1][20 - i].startX + cellSize,
+                                cells[j + 1][i].endY,
+                                greenPaint
+                        );
+                        break;
+                    case "W":
+                        canvas.drawLine(
+                                cells[j + 1][20 - i].startX,
+                                cells[j + 1][i].startY,
+                                cells[j + 1][20 - i].startX,
+                                cells[j + 1][i].endY,
+                                greenPaint
+                        );
+                        break;
                 }
                 // draw image id
 
@@ -556,6 +557,12 @@ public class GridMap extends View {
                             setObstacleID(newID, tCol, tRow);
                             setImageBearing(newBearing, tCol, tRow);
 
+                            if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED){
+                                String dragObstacleText = "UPDATE-BEARING," + obstacleID + "," + newBearing;
+                                byte[] bytes = dragObstacleText.getBytes(Charset.defaultCharset());
+                                BluetoothConnectionService.write(bytes);
+                            }
+
                             invalidate();
                         }
                     });
@@ -642,10 +649,14 @@ public class GridMap extends View {
             if (this.setObstacleStatus) {
                 if (this.initialRow <= 20 && this.initialColumn <= 20) {
                     this.setImageBearing("N", this.initialColumn, this.initialRow);
-                    this.addObstacleCoord(initialColumn, initialRow, "OB0");
+
+                    String newObstacleID = "OB" + String.valueOf(obstacleCounter);
+                    this.addObstacleCoord(initialColumn, initialRow, newObstacleID);
+
+                    obstacleCounter++;
 
                     if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED){
-                        String setObstacleText = "ADD," + "OB0" + ",(" + initialColumn + "," + initialRow + ")";
+                        String setObstacleText = "ADD," + newObstacleID + ",(" + initialColumn + "," + initialRow + ")";
                         byte[] bytes = setObstacleText.getBytes(Charset.defaultCharset());
                         BluetoothConnectionService.write(bytes);
                     }
@@ -850,6 +861,12 @@ public class GridMap extends View {
             // If dropped on indices row and col
             if (endColumn <= 0 || endRow <= 0) {
                 this.removeObstacle(obstacleID, this.initialColumn, this.initialRow);
+
+                if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED){
+                    String dragObstacleText = "SUB," + obstacleID;
+                    byte[] bytes = dragObstacleText.getBytes(Charset.defaultCharset());
+                    BluetoothConnectionService.write(bytes);
+                }
             }
 
             // If dropped within gridmap, shift it to new position unless already got existing
@@ -861,6 +878,13 @@ public class GridMap extends View {
                     this.removeObstacle(obstacleID, this.initialColumn, this.initialRow);
                     this.addObstacleCoord(endColumn, endRow, obstacleID);
                     this.setImageBearing(imageBearing, endColumn, endRow);
+
+                    if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED){
+                        String dragObstacleText = "MOVE," + obstacleID + ",(" + endColumn + "," + endRow + ")";
+                        byte[] bytes = dragObstacleText.getBytes(Charset.defaultCharset());
+                        BluetoothConnectionService.write(bytes);
+                    }
+
                 }
             } else {
                 throw new IllegalArgumentException("Drag event failed");
@@ -895,6 +919,7 @@ public class GridMap extends View {
                 return;
             }
         }
+        obstacleCounter--;
     }
 
     public void toggleCheckedBtn(String buttonName) {
@@ -942,6 +967,7 @@ public class GridMap extends View {
                 this.setImageBearing("", i, j);
             }
         }
+        obstacleCounter = 0;
         this.invalidate();
     }
 

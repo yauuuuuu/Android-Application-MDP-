@@ -294,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * For updating image ID during image rec:
      * TARGET-[obstacle id]-[image id]
-     *  ex: TARGET-3-7 for obstacle 3 === image id 7
+     *  ex: TARGET-3-7 for obstacle OB3 === image id 7
      *
      * For updating robot coordinates/ direction:
      * ROBOT-[x-coord]-[y-coord]-[direction]
