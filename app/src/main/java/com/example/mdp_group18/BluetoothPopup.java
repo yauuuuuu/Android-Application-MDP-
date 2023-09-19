@@ -54,6 +54,24 @@ public class BluetoothPopup extends AppCompatActivity implements AdapterView.OnI
     public ListView lvPairedDevices;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    Handler reconnectionHandler = new Handler();
+    boolean reconnectionStatus = false;
+    Runnable reconnectionRunnable = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                if (BluetoothConnectionService.mState != BluetoothConnectionService.STATE_CONNECTED) {
+                    startConnection();
+                    Toast.makeText(BluetoothPopup.this, "Reconnection Success", Toast.LENGTH_SHORT).show();
+
+                }
+                reconnectionHandler.removeCallbacks(reconnectionRunnable);
+                reconnectionStatus = false;
+            } catch (Exception e) {
+                Toast.makeText(BluetoothPopup.this, "Failed to reconnect, trying in 5 second", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     @SuppressLint("MissingPermission")
     protected void onCreate(Bundle savedInstanceState) {
@@ -382,12 +400,11 @@ public class BluetoothPopup extends AppCompatActivity implements AdapterView.OnI
                 connStatusTextView.setText("Connected to " + mDevice.getName());
 
             }
-            else if(status.equals("disconnected")){
+            else if(status.equals("disconnected") && reconnectionStatus == false){
                 Log.d(TAG, "mBroadcastReceiver5: Disconnected from "+mDevice.getName());
                 Toast.makeText(BluetoothPopup.this, "Disconnected from "+mDevice.getName(), Toast.LENGTH_SHORT).show();
                 mBluetoothConnection = new BluetoothConnectionService(BluetoothPopup.this);
 //                mBluetoothConnection.startAcceptThread();
-
 
                 sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
                 editor = sharedPreferences.edit();
@@ -397,6 +414,10 @@ public class BluetoothPopup extends AppCompatActivity implements AdapterView.OnI
 
                 editor.commit();
 
+                /***
+                reconnectionStatus = true;
+                reconnectionHandler.postDelayed(reconnectionRunnable, 5000);
+                 ***/
             }
             editor.commit();
         }
