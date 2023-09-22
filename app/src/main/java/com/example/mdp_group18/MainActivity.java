@@ -294,15 +294,15 @@ public class MainActivity extends AppCompatActivity {
      *
      * For updating image ID during image rec:
      * TARGET-[obstacle id]-[image id]
-     *  ex: TARGET-3-7 for obstacle OB3 === image id 7
+     *  ex: TARGET,3,7 for obstacle OB3 === image id 7
      *
      * For updating robot coordinates/ direction:
      * ROBOT-[x-coord]-[y-coord]-[direction]
-     *   ex 1: ROBOT-4-6-N for moving robot to [4,6], facing N
-     *   ex 2: ROBOT-6-6-E for moving robot to [6,6], facing E
+     *   ex 1: ROBOT,4,6,N for moving robot to [4,6], facing N
+     *   ex 2: ROBOT,6,6,E for moving robot to [6,6], facing E
      *
      * For updating status of robot:
-     * STATUS-[new status]
+     * STATUS,[new status]
      *
      * For signaling Android that task is completed
      * ENDED
@@ -313,10 +313,15 @@ public class MainActivity extends AppCompatActivity {
             String message = intent.getStringExtra("receivedMessage");
             System.out.println("debug" + message);
             if (message.contains("TARGET")) {
-                String[] cmd = message.split("-");
-                gridMap.updateImageID(cmd[1], cmd[2]);
+                String[] cmd = message.split(",");
+
+                int imageID = Integer.parseInt(cmd[2]);
+                if (11 <= imageID && imageID <= 40){
+                    gridMap.updateImageID(cmd[1], cmd[2]);
+                }
+
             } else if (message.contains("ROBOT")) {
-                String[] cmd = message.split("-");
+                String[] cmd = message.split(",");
                 int xPos = (int) Float.parseFloat(cmd[1]);
                 int yPos = (int) Float.parseFloat(cmd[2]);
                 String direction = cmd[3].trim();
@@ -336,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 gridMap.setCurCoord(xPos,yPos,direction);
             } else if (message.contains("STATUS")){
-                String[] cmd = message.split("-");
+                String[] cmd = message.split(",");
                 String updateStatus =  cmd[1];
                 robotStatus.setText(updateStatus);
             }

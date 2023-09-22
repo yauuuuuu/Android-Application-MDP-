@@ -353,10 +353,15 @@ public class BluetoothConnectionService {
 
                             LocalBroadcastManager.getInstance(mContext).sendBroadcast(incomingMessageIntent);
                         }
-
                         // Reset the message buffer
-                        messageBuffer = new StringBuilder();
+                    } else {
+                        String message = messageBuffer.toString();
+                        Intent incomingMessageIntent = new Intent("incomingMessage");
+                        incomingMessageIntent.putExtra("receivedMessage", message);
+
+                        LocalBroadcastManager.getInstance(mContext).sendBroadcast(incomingMessageIntent);
                     }
+                    messageBuffer = new StringBuilder();
                 } catch (IOException e) {
                     Log.e(TAG, "Error reading input stream. "+e.getMessage());
 
