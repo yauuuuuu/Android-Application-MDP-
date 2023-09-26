@@ -168,96 +168,72 @@ public class MainActivity extends AppCompatActivity {
             switch (control){
                 case "forward":
 
-                    if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED){
-                        controlText = "f";
-                        bytes = controlText.getBytes(Charset.defaultCharset());
-                        BluetoothConnectionService.write(bytes);
-                    }
-
                     switch (this.direction) {
                         case "N":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] + 1}, 0);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] + 1}, 0, control);
                             break;
                         case "W":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 1, this.curCoord[1]}, 0);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 1, this.curCoord[1]}, 0, control);
                             break;
                         case "S":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] - 1}, 0);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] - 1}, 0, control);
                             break;
                         case "E":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 1, this.curCoord[1]}, 0);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 1, this.curCoord[1]}, 0, control);
                             break;
                     }
                     break;
 
                 case "back":
 
-                    if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED) {
-                        controlText = "r";
-                        bytes = controlText.getBytes(Charset.defaultCharset());
-                        BluetoothConnectionService.write(bytes);
-                    }
-
                     switch (this.direction) {
                         case "N":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] - 1}, 0);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] - 1}, 0, control);
                             break;
                         case "W":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 1, this.curCoord[1]}, 0);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 1, this.curCoord[1]}, 0, control);
                             break;
                         case "S":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] + 1}, 0);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0], this.curCoord[1] + 1}, 0, control);
                             break;
                         case "E":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 1, this.curCoord[1]}, 0);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 1, this.curCoord[1]}, 0, control);
                             break;
                     }
                     break;
 
                 case "left":
 
-                    if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED) {
-                        controlText = "tl";
-                        bytes = controlText.getBytes(Charset.defaultCharset());
-                        BluetoothConnectionService.write(bytes);
-                    }
-
                     switch (this.direction) {
                         case "N":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 4, this.curCoord[1] + 1}, 90);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 4, this.curCoord[1] + 1}, 90, control);
                             break;
                         case "W":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 1, this.curCoord[1] - 4}, 90);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 1, this.curCoord[1] - 4}, 90, control);
                             break;
                         case "S":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 4, this.curCoord[1] - 1}, 90);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 4, this.curCoord[1] - 1}, 90, control);
                             break;
                         case "E":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 1, this.curCoord[1] + 4}, 90);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 1, this.curCoord[1] + 4}, 90, control);
                             break;
                     }
                     break;
 
                 case "right":
 
-                    if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED) {
-                        controlText = "tr";
-                        bytes = controlText.getBytes(Charset.defaultCharset());
-                        BluetoothConnectionService.write(bytes);
-                    }
-
                     switch (this.direction) {
                         case "N":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 4, this.curCoord[1] + 2}, -90);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 4, this.curCoord[1] + 2}, -90, control);
                             break;
                         case "W":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 2, this.curCoord[1] + 4}, -90);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 2, this.curCoord[1] + 4}, -90, control);
                             break;
                         case "S":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 4, this.curCoord[1] - 2}, -90);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 4, this.curCoord[1] - 2}, -90, control);
                             break;
                         case "E":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 2, this.curCoord[1] - 4}, -90);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 2, this.curCoord[1] - 4}, -90, control);
                             break;
                     }
                     break;

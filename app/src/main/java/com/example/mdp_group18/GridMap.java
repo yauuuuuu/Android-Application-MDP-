@@ -977,7 +977,7 @@ public class GridMap extends View {
      * @param angle The angle the robot is turning
      */
 
-    public void moveRobot(int[] nextCoord, double angle) {
+    public void moveRobot(int[] nextCoord, double angle, String movement) {
         String robotDirection = this.getRobotDirection();   // current direction of the robot
         boolean flag = false;
         GridMap.robotBearing += angle;
@@ -1020,7 +1020,34 @@ public class GridMap extends View {
             }
         }
 
-        if (!flag){
+        if (flag){
+            if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED) {
+
+                String controlText;
+                byte[] bytes;
+
+                switch (movement){
+                    case "forward":
+                        controlText = "f";
+                        break;
+                    case "back":
+                        controlText = "r";
+                        break;
+                    case "left":
+                        controlText = "tl";
+                        break;
+                    case "right":
+                        controlText = "tr";
+                        break;
+                    default:
+                        controlText="";
+                }
+
+                bytes = controlText.getBytes(Charset.defaultCharset());
+                BluetoothConnectionService.write(bytes);
+            }
+        }
+        else {
             GridMap.robotBearing -= angle;
         }
 
