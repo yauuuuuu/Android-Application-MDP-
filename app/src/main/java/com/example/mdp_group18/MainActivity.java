@@ -269,11 +269,11 @@ public class MainActivity extends AppCompatActivity {
      * Message format:
      *
      * For updating image ID during image rec:
-     * TARGET-[obstacle id]-[image id]
+     * TARGET,[obstacle id],[image id]
      *  ex: TARGET,3,7 for obstacle OB3 === image id 7
      *
      * For updating robot coordinates/ direction:
-     * ROBOT-[x-coord]-[y-coord]-[direction]
+     * ROBOT,[x-coord],[y-coord],[direction]
      *   ex 1: ROBOT,4,6,N for moving robot to [4,6], facing N
      *   ex 2: ROBOT,6,6,E for moving robot to [6,6], facing E
      *

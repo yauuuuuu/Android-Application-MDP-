@@ -260,16 +260,16 @@ public class GridMap extends View {
         textPaint.setColor(Color.BLACK);
 
         for (int x = 1; x <= COL; x++) {
-            if (x >= 10)
+            if (x >= 11)
                 canvas.drawText(
-                        Integer.toString(x),
+                        Integer.toString(x - 1),
                         cells[x][20].startX + (cellSize / 5),
                         cells[x][20].startY + (cellSize / 1.5f),
                         textPaint
                 );
             else
                 canvas.drawText(
-                        Integer.toString(x),
+                        Integer.toString(x - 1),
                         cells[x][20].startX + (cellSize / 2.5f),
                         cells[x][20].startY + (cellSize / 1.5f),
                         textPaint
@@ -277,16 +277,16 @@ public class GridMap extends View {
         }
 
         for (int y = 0; y < ROW; y++) {
-            if ((20 - y) >= 10)
+            if ((20 - y) >= 11)
                 canvas.drawText(
-                        Integer.toString(ROW - y),
+                        Integer.toString(ROW - y - 1),
                         cells[0][y].startX + (cellSize / 5),
                         cells[0][y].startY + (cellSize / 1.5f),
                         textPaint
                 );
             else
                 canvas.drawText(
-                        Integer.toString(ROW - y),
+                        Integer.toString(ROW - y - 1),
                         cells[0][y].startX + (cellSize / 2.5f),
                         cells[0][y].startY + (cellSize / 1.5f),
                         textPaint
@@ -311,82 +311,46 @@ public class GridMap extends View {
         Log.d(TAG, "drawRobot: x = " + robotX + ", y = " + robotY + ", Direction = " + this.getRobotDirection());
         if (! (robotX == -1 && robotY == -1)) {
             op.inMutable = true;
-            switch (this.getRobotDirection()) {
-                case "N":
-                    if (robotY < 2 || robotY > 20 || robotX < 1 || robotX > 19) {
-                        Toast.makeText(
-                                this.getContext(),
-                                "Error with drawing robot (out of bound). Direction = up",
-                                Toast.LENGTH_SHORT
-                        ).show();
-                        this.setCanDrawRobot(false);
-                    } else {
-                        xCoord = cells[robotX][20 - robotY].startX;
-                        yCoord = cells[robotX][20 - robotY].startY;
+            if (robotY < 1 || robotY > 18 || robotX < 1 || robotX > 18) {
+                Toast.makeText(
+                        this.getContext(),
+                        "Error with drawing robot (out of bound). Direction = up",
+                        Toast.LENGTH_SHORT
+                ).show();
+                this.setCanDrawRobot(false);
+            } else {
+                xCoord = (cells[robotX][20 - (robotY + 2)].startX);
+                yCoord = (cells[robotX][20 - (robotY + 2)].startY);
+
+                switch (this.getRobotDirection()) {
+                    case "N":
                         bm = BitmapFactory.decodeResource(getResources(),R.drawable.car_up, op);
-                        mapscalable = Bitmap.createScaledBitmap(bm, 51,51, true);
+                        mapscalable = Bitmap.createScaledBitmap(bm, 81,81, true);
                         canvas.drawBitmap(mapscalable, xCoord, yCoord, null);
-                    }
-                    break;
-
-                case "S":
-                    if (robotY < 1 ||robotY > 19 || robotX < 2 || robotX > 20) {
-                        Toast.makeText(
-                                this.getContext(),
-                                "Error with drawing robot (out of bound). Direction = down",
-                                Toast.LENGTH_SHORT
-                        ).show();
-                        this.setCanDrawRobot(false);
-                    } else {
-                        xCoord = cells[robotX][20 - (robotY)].startX;
-                        yCoord = cells[robotX][20 - (robotY)].startY;
+                        break;
+                    case "S":
                         bm = BitmapFactory.decodeResource(getResources(),R.drawable.car_down, op);
-                        mapscalable = Bitmap.createScaledBitmap(bm, 51,51, true);
+                        mapscalable = Bitmap.createScaledBitmap(bm, 81,81, true);
                         canvas.drawBitmap(mapscalable, xCoord, yCoord, null);
-
-                    }
-                    break;
-                case "E":
-                    if (robotY < 2 || robotY > 20 || robotX < 2 || robotX > 20) {
-                        Toast.makeText(
-                                this.getContext(),
-                                "Error with drawing robot (out of bound). Direction = right",
-                                Toast.LENGTH_SHORT
-                        ).show();
-                        this.setCanDrawRobot(false);
-                    } else {
-                        xCoord = cells[robotX ][20 - robotY].startX;
-                        yCoord = cells[robotX ][20 - robotY].startY;
+                        break;
+                    case "E":
                         bm = BitmapFactory.decodeResource(getResources(),R.drawable.car_right, op);
-                        mapscalable = Bitmap.createScaledBitmap(bm, 51,51, true);
+                        mapscalable = Bitmap.createScaledBitmap(bm, 81,81, true);
                         canvas.drawBitmap(mapscalable, xCoord, yCoord, null);
-                    }
-                    break;
-
-                case "W":
-                    if (robotY < 1 || robotY > 19 ||robotX < 1 || robotX > 19) {
+                        break;
+                    case "W":
+                        bm = BitmapFactory.decodeResource(getResources(),R.drawable.car_left, op);
+                        mapscalable = Bitmap.createScaledBitmap(bm, 81,81, true);
+                        canvas.drawBitmap(mapscalable, xCoord, yCoord, null);
+                        break;
+                    default:
                         Toast.makeText(
                                 this.getContext(),
-                                "Error with drawing robot (out of bound). Direction = left",
+                                "Error with drawing robot (unknown direction)",
                                 Toast.LENGTH_SHORT
                         ).show();
-                        this.setCanDrawRobot(false);
-                    } else {
-                        xCoord = cells[robotX][20 - (robotY )].startX;
-                        yCoord = cells[robotX][20 - (robotY )].startY;
-                        bm = BitmapFactory.decodeResource(getResources(),R.drawable.car_left, op);
-                        mapscalable = Bitmap.createScaledBitmap(bm, 51,51, true);
-                        canvas.drawBitmap(mapscalable, xCoord, yCoord, null);
-                    }
-                    break;
-
-                default:
-                    Toast.makeText(
-                            this.getContext(),
-                            "Error with drawing robot (unknown direction)",
-                            Toast.LENGTH_SHORT
-                    ).show();
-                    break;
+                        break;
+                }
             }
         }
     }
@@ -488,8 +452,8 @@ public class GridMap extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            this.initialColumn = (int) (event.getX() / cellSize);
-            this.initialRow = this.convertRow((int) (event.getY() / cellSize));
+            this.initialColumn = ((int) (event.getX() / cellSize)) - 1;
+            this.initialRow = (this.convertRow((int) (event.getY() / cellSize))) - 1;
             String obstacleID;
             String obstacleBearing;
             ToggleButton setRobotBtn = ((Activity)this.getContext())
@@ -594,47 +558,14 @@ public class GridMap extends View {
                         direction = "N";
                     }
 
-                    switch (direction) {
-                        case "N":
-                            if (this.initialColumn > 0 && this.initialColumn < 20
-                                    && this.initialRow > 1 && this.initialRow <= 20) {
-                                flag = true;
-                            }
-                            break;
-
-                        case "W":
-                            if (this.initialColumn > 0 && this.initialColumn < 20
-                                    && this.initialRow >= 1 && this.initialRow < 20) {
-                                flag = true;
-                            }
-                            break;
-
-                        case "E":
-                            if (this.initialColumn > 1 && this.initialColumn <= 20
-                                    && this.initialRow > 1 && this.initialRow <= 20) {
-                                flag = true;
-                            }
-                            break;
-
-                        case "S":
-                            if (this.initialColumn > 1 && this.initialColumn <= 20
-                                    && this.initialRow > 0 && this.initialRow < 20) {
-                                flag = true;
-                            }
-                            break;
+                    if (this.initialColumn > 0 && this.initialColumn < 20 && this.initialRow > 0 && this.initialRow < 20){
+                        flag = true;
                     }
 
-                    for (int i = 1; i < COL; i ++) {
-                        for (int j = 1; j < ROW; j ++) {
-                            if (cells[i][j].getType().equals("robot")) {
-                                this.updateCells("explored", i, j);
-                            }
-                        }
-                    }
                 }
 
                 if (flag) {
-                    this.setStartCoord(initialColumn, initialRow);
+                    this.setStartCoord(this.initialColumn, this.initialRow);
                     this.startCoordStatus = false;
                     this.updateRobotAxis(this.initialColumn, this.initialRow, direction);
                     if (setRobotBtn.isChecked())
@@ -647,7 +578,7 @@ public class GridMap extends View {
 
             // add id and the image bearing, popup to ask for user input
             if (this.setObstacleStatus) {
-                if (this.initialRow <= 20 && this.initialColumn <= 20) {
+                if (this.initialRow <= 19 && this.initialColumn <= 19) {
                     this.setImageBearing("N", this.initialColumn, this.initialRow);
 
                     String newObstacleID = "OB" + String.valueOf(obstacleCounter);
@@ -679,42 +610,11 @@ public class GridMap extends View {
         if (direction.equals("None")) {
             direction = "N";
         }
-        switch (direction) {
-            case "N":
-                if (col > 0 && col < 20 && row > 1 && row <= 20) {
-                    this.startCoord[0] = col;
-                    this.startCoord[1] = row;
-                } else {
-                    return;
-                }
-                break;
 
-            case "W":
-                if (col > 0 && col < 20 && row >= 1 && row < 20) {
-                    this.startCoord[0] = col;
-                    this.startCoord[1] = row;
-                } else {
-                    return;
-                }
-                break;
+        if (col > 0 && col < 20 && row > 0 && row < 20){
+            this.startCoord[0] = col;
+            this.startCoord[1] = row;
 
-            case "E":
-                if (col > 1 && col <= 20 && row > 1 && row <= 20) {
-                    this.startCoord[0] = col;
-                    this.startCoord[1] = row;
-                } else {
-                    return;
-                }
-                break;
-
-            case "S":
-                if (col > 1 && col <= 20 && row > 0 && row < 20) {
-                    this.startCoord[0] = col;
-                    this.startCoord[1] = row;
-                } else {
-                    return;
-                }
-                break;
         }
 
         if (this.getStartCoordStatus())
@@ -730,16 +630,14 @@ public class GridMap extends View {
      */
 
     public void setCurCoord(int col, int row, String direction) {
-        if (col < 1 || col > 20 || row < 1 || row > 20) {
-            return;
+
+        if (col > 0 && col < 20 && row > 0 && row < 20){
+            this.curCoord[0] = col;
+            this.curCoord[1] = row;
+            this.setRobotDirection(direction);
+            this.updateRobotAxis(col, row, direction);
+
         }
-
-        this.curCoord[0] = col;
-        this.curCoord[1] = row;
-        this.setRobotDirection(direction);
-        this.updateRobotAxis(col, row, direction);
-        this.updateCells("explored", col, row);
-
     }
 
 
@@ -836,6 +734,7 @@ public class GridMap extends View {
         int endColumn, endRow;
         String obstacleID = this.getObstacleID(this.initialColumn, this.initialRow);
         String imageBearing = this.getImageBearing(this.initialColumn, this.initialRow);
+        String imageID = this.getImageID(this.initialColumn, this.initialRow);
 
         // If the currently dragged cell is empty, do nothing
         if (obstacleID.equals("")) {
@@ -855,11 +754,11 @@ public class GridMap extends View {
 
         // Drop on the map (including the indices row and col)
         if (dragEvent.getAction() == DragEvent.ACTION_DROP) {
-            endColumn = (int) (dragEvent.getX() / GridMap.cellSize);
-            endRow = this.convertRow((int) (dragEvent.getY() / GridMap.cellSize));
+            endColumn = (int) (dragEvent.getX() / GridMap.cellSize) - 1;
+            endRow = this.convertRow((int) (dragEvent.getY() / GridMap.cellSize)) - 1;
 
             // If dropped on indices row and col
-            if (endColumn <= 0 || endRow <= 0) {
+            if (endColumn < 0 || endRow < 0) {
                 this.removeObstacle(obstacleID, this.initialColumn, this.initialRow);
 
                 if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED){
@@ -870,14 +769,15 @@ public class GridMap extends View {
             }
 
             // If dropped within gridmap, shift it to new position unless already got existing
-            else if (1 <= this.initialColumn && this.initialColumn <= 20
-                    && 1 <= this.initialRow && this.initialRow <= 20
-                    && endColumn <= 20 && endRow <= 20) {
+            else if (0 <= this.initialColumn && this.initialColumn < 20
+                    && 0 <= this.initialRow && this.initialRow < 20
+                    && endColumn <= 19 && endRow <= 19) {
                 // Only execute if nothing is present at drag location
                 if (this.getObstacleID(endColumn, endRow).equals("")) {
                     this.removeObstacle(obstacleID, this.initialColumn, this.initialRow);
                     this.addObstacleCoord(endColumn, endRow, obstacleID);
                     this.setImageBearing(imageBearing, endColumn, endRow);
+                    this.setImageID(imageID,endColumn,endRow);
 
                     if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED){
                         String dragObstacleText = "MOVE," + obstacleID + ",(" + endColumn + "," + endRow + ")";
@@ -914,6 +814,7 @@ public class GridMap extends View {
                 obstacleY = currentObstacle[1];
                 this.setObstacleID("", obstacleX, obstacleY);
                 this.setImageBearing("", obstacleX, obstacleY);
+                this.setImageID("",obstacleX,obstacleY);
                 this.updateCells("tile", obstacleX, obstacleY);
                 this.getObstacleCoord().remove(currentObstacle);
                 return;
@@ -960,8 +861,8 @@ public class GridMap extends View {
         this.obstacleCoord = new ArrayList<>();
         mapDrawn = !hardReset;
 
-        for (int i = 1; i <= 20; i++) {
-            for (int j = 1; j <= 20; j++) {
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 20; j++) {
                 this.setObstacleID("", i, j);
                 this.setImageID("", i, j);
                 this.setImageBearing("", i, j);
@@ -983,42 +884,36 @@ public class GridMap extends View {
         GridMap.robotBearing += angle;
         double offset = GridMap.robotBearing % 360;
         offset = this.handleAngle(offset);
-        // facing N
-        if (offset > 45 && offset <= 135) {
-            if (nextCoord[1] <= 20 && nextCoord[1] > 1 && nextCoord[0] >= 1 && nextCoord[0] < 20
-                    && validMove(nextCoord, "N")) {
+
+        if (nextCoord[1] <= 18 && nextCoord[1] >= 1 && nextCoord[0] >= 1 && nextCoord[0] <= 18
+                && validMove(nextCoord)) {
+
+            // facing N
+            if (offset > 45 && offset <= 135) {
                 robotDirection = "N";
                 this.setCurCoord(nextCoord[0], nextCoord[1], robotDirection);
                 flag = true;
             }
-        }
-        // facing W
-        else if (offset > 135 && offset <= 225) {
-            if (nextCoord[1] < 20 && nextCoord[1] >= 1 && nextCoord[0] >= 1 && nextCoord[0] < 20
-                    && validMove(nextCoord, "W")) {
+            // facing W
+            else if (offset > 135 && offset <= 225) {
                 robotDirection = "W";
                 this.setCurCoord(nextCoord[0], nextCoord[1], robotDirection);
                 flag = true;
             }
-        }
-        // facing S
-        else if (offset > 225 && offset < 315) {
-            if (nextCoord[1] < 20 && nextCoord[1] >= 1 && nextCoord[0] > 1 && nextCoord[0] <= 20
-                    && validMove(nextCoord, "S")) {
+            // facing S
+            else if (offset > 225 && offset < 315) {
                 robotDirection = "S";
                 this.setCurCoord(nextCoord[0], nextCoord[1], robotDirection);
                 flag = true;
             }
-        }
-        // facing E
-        else {
-            if (nextCoord[1] <= 20 && nextCoord[1] > 1 && nextCoord[0] > 1 && nextCoord[0] <= 20
-                    && validMove(nextCoord, "E")) {
+            // facing E
+            else {
                 robotDirection = "E";
                 this.setCurCoord(nextCoord[0], nextCoord[1], robotDirection);
                 flag = true;
             }
         }
+
 
         if (flag){
             if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED) {
@@ -1046,8 +941,7 @@ public class GridMap extends View {
                 bytes = controlText.getBytes(Charset.defaultCharset());
                 BluetoothConnectionService.write(bytes);
             }
-        }
-        else {
+        } else {
             GridMap.robotBearing -= angle;
         }
 
@@ -1071,48 +965,18 @@ public class GridMap extends View {
      * Check if the robot's move is a valid move.
      * This function is called after robot performs the move, so checking is done by examining if the robot 2x2 is currently sitting on the obstacle
      * @param robotCoord The coordinate of the robot (note that robot moved first before checking, so this position may be invalid depending on the return value of this function)
-     * @param direction The direction of the robot (note that the robot has made a move, so this direction is if the move is valid, what the robot's direction will be)
      * @return {@code true} if no obstacle hit by robot, {@code false} otherwise
      */
-    public boolean validMove(int[] robotCoord, String direction) {
+    public boolean validMove(int[] robotCoord) {
         ArrayList<int[]> obstacleCoords = this.getObstacleCoord();
         // examine for each obstacle on the map
         for (int[] currentObstacle : obstacleCoords) {
             int obstacleX = currentObstacle[0];
             int obstacleY = currentObstacle[1];
 
-            /*
-            manual way to check if robot is sitting on the obstacle
-            since robot coordinate is based on the cell occupied by its top left wheel,
-            depending on the direction, the cells to be examined are different
-             */
-            switch (direction) {
-                case "N":
-                    if (robotCoord[1] - 1 <= obstacleY && obstacleY <= robotCoord[1]
-                            && robotCoord[0] <= obstacleX && obstacleX <= robotCoord[0] + 1) {
-                        return false;
-                    }
-                    break;
-                case "S":
-                    if (robotCoord[1] <= obstacleY && obstacleY <= robotCoord[1] + 1
-                            && robotCoord[0] - 1 <= obstacleX && obstacleX <= robotCoord[0]) {
-                        return false;
-                    }
-                    break;
-                case "W":
-                    if (robotCoord[0] <= obstacleX && obstacleX <= robotCoord[0] + 1
-                            && robotCoord[1] <= obstacleY && obstacleY <= robotCoord[1] + 1) {
-                        return false;
-                    }
-                    break;
-                case "E":
-                    if (robotCoord[0] - 1 <= obstacleX && obstacleX <= robotCoord[0]
-                            && robotCoord[1] - 1 <= obstacleY && obstacleY <= robotCoord[1]) {
-                        return false;
-                    }
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid direction: " + direction);
+            if (robotCoord[1] - 1 <= obstacleY && obstacleY <= robotCoord[1] + 1
+                    && robotCoord[0] - 1 <= obstacleX && obstacleX <= robotCoord[0] + 1) {
+                return false;
             }
         }
         return true;
@@ -1213,7 +1077,7 @@ public class GridMap extends View {
      * @param y The y-coord of the obstacle
      */
     public void setImageID(String imageID, int x, int y) {
-        IMAGE_LIST[y - 1][x - 1] = imageID;
+        IMAGE_LIST[y][x] = imageID;
     }
 
     /**
@@ -1224,7 +1088,7 @@ public class GridMap extends View {
      * @param y The y-coord of the obstacle
      */
     public void setObstacleID(String obstacleID, int x, int y) {
-        OBSTACLE_LIST[y - 1][x - 1] = obstacleID;
+        OBSTACLE_LIST[y][x] = obstacleID;
     }
 
     /**
@@ -1234,11 +1098,11 @@ public class GridMap extends View {
      * @param y The y-coord of the obstacle
      */
     public void setImageBearing(String imageBearing, int x, int y) {
-        IMAGE_BEARING[y - 1][x - 1] = imageBearing;
+        IMAGE_BEARING[y][x] = imageBearing;
     }
 
     public void updateCells(String type, int x, int y) {
-        cells[x][ROW - y].setType(type);
+        cells[x+1][ROW - (y + 1)].setType(type);
     }
 
     /**
@@ -1248,7 +1112,7 @@ public class GridMap extends View {
      * @return The obstacle ID at [x,y] with "OB"
      */
     public String getObstacleID(int x, int y) {
-        return OBSTACLE_LIST[y - 1][x - 1];
+        return OBSTACLE_LIST[y][x];
     }
 
     /**
@@ -1258,7 +1122,7 @@ public class GridMap extends View {
      * @return The image ID at [x,y]
      */
     public String getImageID(int x, int y) {
-        return IMAGE_LIST[y - 1][x - 1];
+        return IMAGE_LIST[y][x];
     }
 
     /**
@@ -1268,6 +1132,6 @@ public class GridMap extends View {
      * @return The obstacle bearing (North South East West)
      */
     public String getImageBearing(int x, int y) {
-        return IMAGE_BEARING[y - 1][x - 1];
+        return IMAGE_BEARING[y][x];
     }
 }
