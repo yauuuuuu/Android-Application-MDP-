@@ -12,6 +12,7 @@ import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,7 @@ import java.nio.charset.Charset;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "Main Activity";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private Context context;
@@ -206,16 +208,16 @@ public class MainActivity extends AppCompatActivity {
 
                     switch (this.direction) {
                         case "N":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 4, this.curCoord[1] + 1}, 90, control);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 4, this.curCoord[1] + 2}, 90, control);
                             break;
                         case "W":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 1, this.curCoord[1] - 4}, 90, control);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 2, this.curCoord[1] - 4}, 90, control);
                             break;
                         case "S":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 4, this.curCoord[1] - 1}, 90, control);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 4, this.curCoord[1] - 2}, 90, control);
                             break;
                         case "E":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 1, this.curCoord[1] + 4}, 90, control);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 2, this.curCoord[1] + 4}, 90, control);
                             break;
                     }
                     break;
@@ -291,9 +293,11 @@ public class MainActivity extends AppCompatActivity {
             if (message.contains("TARGET")) {
                 String[] cmd = message.split(",");
 
-                int imageID = Integer.parseInt(cmd[2]);
+                Log.d(TAG, "Receiving Message: Target - ObstacleID = " + cmd[1] + ", ImageID = " + cmd[2]);
+
+                int imageID = Integer.parseInt(cmd[2].trim());
                 if (11 <= imageID && imageID <= 40){
-                    gridMap.updateImageID(cmd[1], cmd[2]);
+                    gridMap.updateImageID(cmd[1], cmd[2].trim());
                 }
 
             } else if (message.contains("ROBOT")) {
@@ -318,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
                 gridMap.setCurCoord(xPos,yPos,direction);
             } else if (message.contains("STATUS")){
                 String[] cmd = message.split(",");
-                String updateStatus =  cmd[1];
+                String updateStatus =  cmd[1].trim();
                 robotStatus.setText(updateStatus);
             }
         }
