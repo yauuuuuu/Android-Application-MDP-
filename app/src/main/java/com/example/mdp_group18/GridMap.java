@@ -586,11 +586,13 @@ public class GridMap extends View {
 
                     obstacleCounter++;
 
+                    /***
                     if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED){
                         String setObstacleText = "ADD," + newObstacleID + ",(" + initialColumn + "," + initialRow + ")";
                         byte[] bytes = setObstacleText.getBytes(Charset.defaultCharset());
                         BluetoothConnectionService.write(bytes);
                     }
+                     ***/
                 }
                 this.invalidate();
                 return true;
@@ -990,7 +992,7 @@ public class GridMap extends View {
         StringBuilder message = new StringBuilder();
         for (int i = 0; i < this.getObstacleCoord().size(); i ++) {
             int[] currentObstacle = this.getObstacleCoord().get(i);
-            String imageBearing = IMAGE_BEARING[currentObstacle[1] - 1][currentObstacle[0] - 1];
+            String imageBearing = IMAGE_BEARING[currentObstacle[1]][currentObstacle[0]];
 
             /*
             message is in the following format:
@@ -1001,6 +1003,32 @@ public class GridMap extends View {
                     .append(currentObstacle[2]).append("|");
         }
         return message.toString();
+    }
+
+    public boolean startExplore(){
+        if (BluetoothConnectionService.mState != BluetoothConnectionService.STATE_CONNECTED){
+            return false;
+        } else{
+            String startExploreText = "startExplore|";
+            startExploreText += getAllObstacles();
+
+            byte[] bytes;
+            bytes = startExploreText.getBytes(Charset.defaultCharset());
+            BluetoothConnectionService.write(bytes);
+        }
+        return true;
+    }
+
+    public boolean startFastest(){
+        if (BluetoothConnectionService.mState != BluetoothConnectionService.STATE_CONNECTED){
+            return false;
+        } else{
+            String startFastestText = "startFastest";
+            byte[] bytes;
+            bytes = startFastestText.getBytes(Charset.defaultCharset());
+            BluetoothConnectionService.write(bytes);
+        }
+        return true;
     }
 
     private static class MyDragShadowBuilder extends DragShadowBuilder {

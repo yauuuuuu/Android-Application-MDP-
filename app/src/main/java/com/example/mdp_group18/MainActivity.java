@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private String direction;
     private TextView robotXCoordText, robotYCoordText, robotDirectionText;
     private ImageButton forwardBtn, backBtn, leftBtn, rightBtn;
+    private Button startExplorationBtn, startFastestBtn;
     private static TextView bluetoothStatus, bluetoothDevice;
     private TextView robotStatus;
 
@@ -128,6 +129,31 @@ public class MainActivity extends AppCompatActivity {
         rightBtn.setOnClickListener(view -> {
             moveRobotControl("right");
         });
+
+        // Set Challenge Buttons
+        this.startExplorationBtn = findViewById(R.id.startExplorationBtn);
+        this.startFastestBtn = findViewById(R.id.startFastestCarBtn);
+
+        startExplorationBtn.setOnClickListener(view -> {
+            if(this.gridMap.startExplore()){
+                startExplorationBtn.setText("Challenge in progress");
+                startExplorationBtn.setEnabled(false);
+
+            } else {
+                Toast.makeText(this,"Please connect to the robot first.",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        startFastestBtn.setOnClickListener(view -> {
+            if(this.gridMap.startFastest()){
+                startFastestBtn.setText("Challenge in progress");
+                startFastestBtn.setEnabled(false);
+
+            } else {
+                Toast.makeText(this,"Please connect to the robot first.",Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     public void sharedPreferences() {
@@ -298,6 +324,9 @@ public class MainActivity extends AppCompatActivity {
                 int imageID = Integer.parseInt(cmd[2].trim());
                 if (11 <= imageID && imageID <= 40){
                     gridMap.updateImageID(cmd[1], cmd[2].trim());
+                } else {
+                    Toast.makeText(context,"Invalid Image ID = " + imageID, Toast.LENGTH_SHORT).show();
+
                 }
 
             } else if (message.contains("ROBOT")) {
@@ -324,6 +353,12 @@ public class MainActivity extends AppCompatActivity {
                 String[] cmd = message.split(",");
                 String updateStatus =  cmd[1].trim();
                 robotStatus.setText(updateStatus);
+            } else if (message.contains("EXPLORE")){
+                startExplorationBtn.setEnabled(true);
+                startExplorationBtn.setText("Start Exploration");
+            } else if (message.contains("FASTEST")){
+                startFastestBtn.setEnabled(true);
+                startFastestBtn.setText("Start Fastest Car");
             }
         }
     };

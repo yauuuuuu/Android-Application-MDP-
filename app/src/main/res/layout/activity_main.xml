@@ -224,8 +224,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/coordinatesContent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="@id/viewPager"
+        app:layout_constraintBottom_toTopOf="@id/startExplorationBtn"
         app:layout_constraintStart_toEndOf="@id/mapView"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -289,6 +289,30 @@
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/startExplorationBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:text="Start Exploration"
+        android:textSize="10dp"
+        android:textStyle="bold"
+        android:layout_marginBottom="3dp"
+        app:layout_constraintBottom_toTopOf="@id/startFastestCarBtn"
+        app:layout_constraintStart_toEndOf="@id/viewPager"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/startFastestCarBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:text="Start Fastest Car"
+        android:textSize="10dp"
+        android:textStyle="bold"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@id/bluetoothButton"
+        app:layout_constraintStart_toEndOf="@id/viewPager"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/bluetoothButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -301,7 +325,6 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/viewPager"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toEndOf="@id/viewPager" />
 
 
