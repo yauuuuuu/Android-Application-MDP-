@@ -1,5 +1,7 @@
 package com.example.mdp_group18;
 
+import static com.example.mdp_group18.R.color.grassColor;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.bluetooth.BluetoothAdapter;
@@ -8,14 +10,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
@@ -46,9 +51,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView robotXCoordText, robotYCoordText, robotDirectionText;
     private ImageButton forwardBtn, backBtn, leftBtn, rightBtn;
     private Button startExplorationBtn, startFastestBtn;
+    private Boolean startExplorationStatus = false;
     private static TextView bluetoothStatus, bluetoothDevice;
     private TextView robotStatus;
-
     BluetoothAdapter btAdaptor;
 
     @Override
@@ -135,13 +140,24 @@ public class MainActivity extends AppCompatActivity {
         this.startFastestBtn = findViewById(R.id.startFastestCarBtn);
 
         startExplorationBtn.setOnClickListener(view -> {
-            if(this.gridMap.startExplore()){
-                startExplorationBtn.setText("Challenge in progress");
-                startExplorationBtn.setEnabled(false);
 
+            if (!startExplorationStatus){
+                if(this.gridMap.startExplorePrep()){
+                    startExplorationBtn.setText("Start Exploration");
+                    startExplorationBtn.getBackground().setColorFilter(getColor(grassColor), PorterDuff.Mode.MULTIPLY);
+                    startExplorationStatus=true;
+                } else {
+                    Toast.makeText(this,"Please connect to the robot first.",Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Toast.makeText(this,"Please connect to the robot first.",Toast.LENGTH_SHORT).show();
+                if(this.gridMap.startExplore()){
+                    startExplorationBtn.setText("Challenge in progress");
+                    startExplorationBtn.setEnabled(false);
+                } else {
+                    Toast.makeText(this,"Please connect to the robot first.",Toast.LENGTH_SHORT).show();
+                }
             }
+
         });
 
         startFastestBtn.setOnClickListener(view -> {
@@ -354,8 +370,12 @@ public class MainActivity extends AppCompatActivity {
                 String updateStatus =  cmd[1].trim();
                 robotStatus.setText(updateStatus);
             } else if (message.contains("EXPLORE")){
+
+                startExplorationStatus = false;
+                startExplorationBtn.setText("Exploration Setup");
                 startExplorationBtn.setEnabled(true);
-                startExplorationBtn.setText("Start Exploration");
+                startExplorationBtn.getBackground().clearColorFilter();
+
             } else if (message.contains("FASTEST")){
                 startFastestBtn.setEnabled(true);
                 startFastestBtn.setText("Start Fastest Car");

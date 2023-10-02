@@ -996,22 +996,34 @@ public class GridMap extends View {
 
             /*
             message is in the following format:
-            x-coord,y-coord,N/S/E/W,obstacleID|x-coord,y-coord,N/S/E/W,obstacleID|...
+            |x-coord,y-coord,N/S/E/W,obstacleID|x-coord,y-coord,N/S/E/W,obstacleID|...
              */
-            message.append(currentObstacle[0]).append(",").append(currentObstacle[1])
+            message.append("|").append(currentObstacle[0]).append(",").append(currentObstacle[1])
                     .append(",").append(imageBearing.charAt(0)).append(",")
-                    .append(currentObstacle[2]).append("|");
+                    .append(currentObstacle[2]);
         }
         return message.toString();
+    }
+
+    public boolean startExplorePrep(){
+        if (BluetoothConnectionService.mState != BluetoothConnectionService.STATE_CONNECTED){
+            return false;
+        } else{
+            String exploreSetupText = "setupExplore";
+            exploreSetupText += getAllObstacles();
+
+            byte[] bytes;
+            bytes = exploreSetupText.getBytes(Charset.defaultCharset());
+            BluetoothConnectionService.write(bytes);
+        }
+        return true;
     }
 
     public boolean startExplore(){
         if (BluetoothConnectionService.mState != BluetoothConnectionService.STATE_CONNECTED){
             return false;
         } else{
-            String startExploreText = "startExplore|";
-            startExploreText += getAllObstacles();
-
+            String startExploreText = "startExplore";
             byte[] bytes;
             bytes = startExploreText.getBytes(Charset.defaultCharset());
             BluetoothConnectionService.write(bytes);

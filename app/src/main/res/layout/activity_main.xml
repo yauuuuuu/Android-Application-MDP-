@@ -292,7 +292,7 @@
         android:id="@+id/startExplorationBtn"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
-        android:text="Start Exploration"
+        android:text="Exploration Setup"
         android:textSize="10dp"
         android:textStyle="bold"
         android:layout_marginBottom="3dp"
