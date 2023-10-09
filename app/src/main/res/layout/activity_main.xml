@@ -225,7 +225,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="@id/viewPager"
-        app:layout_constraintBottom_toTopOf="@id/startExplorationBtn"
+        app:layout_constraintBottom_toTopOf="@id/resetExplorationBtn"
         app:layout_constraintStart_toEndOf="@id/mapView"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -287,6 +287,20 @@
             app:srcCompat="@drawable/up_arrow" />
 
     </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/resetExplorationBtn"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:text="Reset Exploration"
+        android:textSize="10dp"
+        android:textStyle="bold"
+        android:layout_marginBottom="3dp"
+        android:visibility="gone"
+        android:background="@color/niceGreen"
+        app:layout_constraintBottom_toTopOf="@id/startExplorationBtn"
+        app:layout_constraintStart_toEndOf="@id/viewPager"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/startExplorationBtn"

@@ -1,6 +1,7 @@
 package com.example.mdp_group18;
 
 import static com.example.mdp_group18.R.color.grassColor;
+import static com.example.mdp_group18.R.color.niceGreen;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private String direction;
     private TextView robotXCoordText, robotYCoordText, robotDirectionText;
     private ImageButton forwardBtn, backBtn, leftBtn, rightBtn;
-    private Button startExplorationBtn, startFastestBtn;
+    private Button startExplorationBtn, startFastestBtn, resetExplorationBtn;
     private Boolean startExplorationStatus = false;
     private static TextView bluetoothStatus, bluetoothDevice;
     private TextView robotStatus;
@@ -138,14 +139,16 @@ public class MainActivity extends AppCompatActivity {
         // Set Challenge Buttons
         this.startExplorationBtn = findViewById(R.id.startExplorationBtn);
         this.startFastestBtn = findViewById(R.id.startFastestCarBtn);
+        this.resetExplorationBtn = findViewById(R.id.resetExplorationBtn);
 
         startExplorationBtn.setOnClickListener(view -> {
 
             if (!startExplorationStatus){
                 if(this.gridMap.startExplorePrep()){
                     startExplorationBtn.setText("Start Exploration");
-                    startExplorationBtn.getBackground().setColorFilter(getColor(grassColor), PorterDuff.Mode.MULTIPLY);
+                    startExplorationBtn.getBackground().setColorFilter(getColor(niceGreen), PorterDuff.Mode.MULTIPLY);
                     startExplorationStatus=true;
+                    resetExplorationBtn.setVisibility(View.VISIBLE);
                 } else {
                     Toast.makeText(this,"Please connect to the robot first.",Toast.LENGTH_SHORT).show();
                 }
@@ -153,11 +156,16 @@ public class MainActivity extends AppCompatActivity {
                 if(this.gridMap.startExplore()){
                     startExplorationBtn.setText("Challenge in progress");
                     startExplorationBtn.setEnabled(false);
+                    resetExplorationBtn.setVisibility(View.GONE);
                 } else {
                     Toast.makeText(this,"Please connect to the robot first.",Toast.LENGTH_SHORT).show();
                 }
             }
+        });
 
+        resetExplorationBtn.setOnClickListener(view -> {
+            resetExplorationBtn();
+            resetExplorationBtn.setVisibility(View.GONE);
         });
 
         startFastestBtn.setOnClickListener(view -> {
@@ -308,6 +316,13 @@ public class MainActivity extends AppCompatActivity {
         return bluetoothDevice;
     }
 
+    public void resetExplorationBtn(){
+        this.startExplorationStatus = false;
+        this.startExplorationBtn.setText("Exploration Setup");
+        this.startExplorationBtn.setEnabled(true);
+        this.startExplorationBtn.getBackground().clearColorFilter();
+    }
+
     /**
      * Handles message sent from RPI
      * Message format:
@@ -371,10 +386,7 @@ public class MainActivity extends AppCompatActivity {
                 robotStatus.setText(updateStatus);
             } else if (message.contains("EXPLORE")){
 
-                startExplorationStatus = false;
-                startExplorationBtn.setText("Exploration Setup");
-                startExplorationBtn.setEnabled(true);
-                startExplorationBtn.getBackground().clearColorFilter();
+                resetExplorationBtn();
 
             } else if (message.contains("FASTEST")){
                 startFastestBtn.setEnabled(true);

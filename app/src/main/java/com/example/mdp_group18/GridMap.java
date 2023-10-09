@@ -56,23 +56,8 @@ public class GridMap extends View {
                 case "obstacle":
                     this.paint = obstacleColor;
                     break;
-                case "end":
-                    this.paint = endColor;
-                    break;
-                case "start":
-                    this.paint = startColor;
-                    break;
-                case "waypoint":
-                    this.paint = waypointColor;
-                    break;
                 case "tile":
                     this.paint = tileColor;
-                    break;
-                case "arrow":
-                    this.paint = arrowColor;
-                    break;
-                case "fastestPath":
-                    this.paint = fastestPathColor;
                     break;
                 case "image":
                     this.paint = obstacleColor;
@@ -100,13 +85,9 @@ public class GridMap extends View {
     private final Paint whitePaint = new Paint();
     private final Paint greenPaint = new Paint();
     private final Paint obstacleColor = new Paint();
-    private final Paint robotColor = new Paint();
-    private final Paint endColor = new Paint();
-    private final Paint startColor = new Paint();
-    private final Paint waypointColor = new Paint();
     private final Paint tileColor = new Paint();
-    private final Paint arrowColor = new Paint();
-    private final Paint fastestPathColor = new Paint();
+    private final Paint coordHelperColor = new Paint();
+    private final Paint coordHelperColor2 = new Paint();
     private String robotDirection = "None";
     public static double robotBearing = 90;
     private int[] startCoord;
@@ -127,6 +108,7 @@ public class GridMap extends View {
     static Object localState;
     int initialColumn, initialRow;
     public int obstacleCounter = 0;
+    private int[] greyShadow = new int[]{-1,-1};
 
     public GridMap(Context c) {
         super(c);
@@ -143,14 +125,9 @@ public class GridMap extends View {
         this.greenPaint.setColor(getResources().getColor(R.color.grassColor));
         this.greenPaint.setStrokeWidth(8);
         this.obstacleColor.setColor(getResources().getColor(R.color.rockColor));
-        this.robotColor.setColor(getResources().getColor(R.color.light_blue));
-        this.robotColor.setStrokeWidth(2);
-        this.endColor.setColor(Color.RED);
-        this.startColor.setColor(Color.CYAN);
-        this.waypointColor.setColor(Color.GREEN);
+        this.coordHelperColor.setColor(getResources().getColor(R.color.niceBlue));
+        this.coordHelperColor.setColor(getResources().getColor(R.color.betterBlue));
         this.tileColor.setColor(getResources().getColor(R.color.tileColor));
-        this.arrowColor.setColor(Color.BLACK);
-        this.fastestPathColor.setColor(Color.MAGENTA);
         this.startCoord = new int[]{-1, -1};
         this.curCoord = new int[]{-1, -1};
 
@@ -223,15 +200,43 @@ public class GridMap extends View {
 
     private void drawIndividualCell(Canvas canvas) {
         // y starts from 1 since 1st column is used for index labels
-        for (int x = 1; x <= COL; x++)
-            for (int y = 0; y < ROW; y++)
-                canvas.drawRect(
-                        cells[x][y].startX,
-                        cells[x][y].startY,
-                        cells[x][y].endX,
-                        cells[x][y].endY,
-                        cells[x][y].paint
-                );
+        for (int x = 1; x <= COL; x++) {
+            for (int y = 0; y < ROW; y++) {
+                if (greyShadow[0] == x && greyShadow[1] == y) {
+                    canvas.drawRect(
+                            cells[x][y].startX,
+                            cells[x][y].startY,
+                            cells[x][y].endX,
+                            cells[x][y].endY,
+                            coordHelperColor2
+                    );
+                } else if (greyShadow[0] == x && greyShadow[1] < y) {
+                    canvas.drawRect(
+                            cells[x][y].startX,
+                            cells[x][y].startY,
+                            cells[x][y].endX,
+                            cells[x][y].endY,
+                            coordHelperColor
+                    );
+                } else if (greyShadow[1] == y && greyShadow[0] > x) {
+                    canvas.drawRect(
+                            cells[x][y].startX,
+                            cells[x][y].startY,
+                            cells[x][y].endX,
+                            cells[x][y].endY,
+                            coordHelperColor
+                    );
+                } else {
+                    canvas.drawRect(
+                            cells[x][y].startX,
+                            cells[x][y].startY,
+                            cells[x][y].endX,
+                            cells[x][y].endY,
+                            cells[x][y].paint
+                    );
+                }
+            }
+        }
     }
 
     private void drawGridLines(Canvas canvas) {
@@ -449,15 +454,28 @@ public class GridMap extends View {
         return startCoordStatus;
     }
 
+    public void setCoordHelper(int x, int y){
+        greyShadow[0] = x-1;
+        greyShadow[1] = y;
+    }
+    public void cancelCoordHelper(){
+        greyShadow[0] = -1;
+        greyShadow[1] = -1;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
+        this.initialColumn = ((int) (event.getX() / cellSize)) - 1;
+        this.initialRow = (this.convertRow((int) (event.getY() / cellSize))) - 1;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            this.initialColumn = ((int) (event.getX() / cellSize)) - 1;
-            this.initialRow = (this.convertRow((int) (event.getY() / cellSize))) - 1;
             String obstacleID;
             String obstacleBearing;
-            ToggleButton setRobotBtn = ((Activity)this.getContext())
+            ToggleButton setRobotBtn = ((Activity) this.getContext())
                     .findViewById(R.id.setRobotBtn);
+
+            // Set Map Coord Helper
+            // setCoordHelper(initialColumn, initialRow);
 
             if (MapConfigurationTabFragment.dragStatus) {
                 // if the drag location has no obstacles, do nothing
@@ -500,13 +518,17 @@ public class GridMap extends View {
                     mIDSpinner.setSelection(Integer.parseInt(obstacleID.substring(2)));
 
                     switch (obstacleBearing) {
-                        case "N": mBearingSpinner.setSelection(0);
+                        case "N":
+                            mBearingSpinner.setSelection(0);
                             break;
-                        case "S": mBearingSpinner.setSelection(1);
+                        case "S":
+                            mBearingSpinner.setSelection(1);
                             break;
-                        case "E": mBearingSpinner.setSelection(2);
+                        case "E":
+                            mBearingSpinner.setSelection(2);
                             break;
-                        case "W": mBearingSpinner.setSelection(3);
+                        case "W":
+                            mBearingSpinner.setSelection(3);
                     }
 
                     final String oldID = obstacleID;
@@ -521,7 +543,7 @@ public class GridMap extends View {
                             setObstacleID(newID, tCol, tRow);
                             setImageBearing(newBearing, tCol, tRow);
 
-                            if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED){
+                            if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED) {
                                 String dragObstacleText = "UPDATE-BEARING," + obstacleID + "," + newBearing;
                                 byte[] bytes = dragObstacleText.getBytes(Charset.defaultCharset());
                                 BluetoothConnectionService.write(bytes);
@@ -543,7 +565,7 @@ public class GridMap extends View {
                     mBuilder.setView(mView);
                     AlertDialog dialog = mBuilder.create();
                     dialog.show();
-                    Window window =  dialog.getWindow();
+                    Window window = dialog.getWindow();
                     WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
                     layoutParams.width = 150;
                     window.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -558,7 +580,7 @@ public class GridMap extends View {
                         direction = "N";
                     }
 
-                    if (this.initialColumn > 0 && this.initialColumn < 20 && this.initialRow > 0 && this.initialRow < 20){
+                    if (this.initialColumn > 0 && this.initialColumn < 20 && this.initialRow > 0 && this.initialRow < 20) {
                         flag = true;
                     }
 
@@ -587,17 +609,29 @@ public class GridMap extends View {
                     obstacleCounter++;
 
                     /***
-                    if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED){
-                        String setObstacleText = "ADD," + newObstacleID + ",(" + initialColumn + "," + initialRow + ")";
-                        byte[] bytes = setObstacleText.getBytes(Charset.defaultCharset());
-                        BluetoothConnectionService.write(bytes);
-                    }
+                     if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED){
+                     String setObstacleText = "ADD," + newObstacleID + ",(" + initialColumn + "," + initialRow + ")";
+                     byte[] bytes = setObstacleText.getBytes(Charset.defaultCharset());
+                     BluetoothConnectionService.write(bytes);
+                     }
                      ***/
                 }
                 this.invalidate();
                 return true;
             }
+            this.invalidate();
         }
+            /*
+        } else if (event.getAction() == MotionEvent.ACTION_MOVE){
+            Log.d(TAG, "action_move");
+            setCoordHelper(initialColumn, initialRow);
+            this.invalidate();
+        } else if (event.getAction() == MotionEvent.ACTION_UP){
+            Log.d(TAG, "action_up");
+            cancelCoordHelper();
+            this.invalidate();
+        }
+             */
         return false;
     }
 
@@ -1009,7 +1043,7 @@ public class GridMap extends View {
         if (BluetoothConnectionService.mState != BluetoothConnectionService.STATE_CONNECTED){
             return false;
         } else{
-            String exploreSetupText = "setupExplore";
+            String exploreSetupText = "setupExplore|" + getRobotDirection();
             exploreSetupText += getAllObstacles();
 
             byte[] bytes;
