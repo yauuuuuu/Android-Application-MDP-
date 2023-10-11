@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:textOff="SET ROBOT"
-            android:background="@drawable/rounded_rect"
+            android:background="@drawable/toggle_btn"
             android:textOn="CANCEL"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"/>
@@ -40,7 +40,7 @@
             android:textOff="SET OBSTACLE(S)"
             android:textOn="CANCEL"
             android:padding="5dp"
-            android:background="@drawable/rounded_rect"
+            android:background="@drawable/toggle_btn"
             android:checked="false"
             android:layout_marginTop="10dp"/>
 

@@ -5,6 +5,7 @@
 
     <color name="headerBg">#CCB4B4</color>
     <color name="tabColor">#8C572C</color>
+    <color name="btnToggleOn">#997950</color>
     <color name="bluetoothBlue">#0082FC</color>
 
     <color name="tileColor">#E5D3B3</color>
