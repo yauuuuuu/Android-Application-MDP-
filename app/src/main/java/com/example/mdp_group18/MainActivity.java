@@ -353,12 +353,11 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "Receiving Message: Target - ObstacleID = " + cmd[1] + ", ImageID = " + cmd[2]);
 
                 int imageID = Integer.parseInt(cmd[2].trim());
-                if (11 <= imageID && imageID <= 40){
+                if (imageID != -1){
                     gridMap.updateImageID(cmd[1], cmd[2].trim());
-                } else {
-                    Toast.makeText(context,"Invalid Image ID = " + imageID, Toast.LENGTH_SHORT).show();
-
                 }
+
+                Toast.makeText(context,"Received Image ID = " + imageID + ", for Obstacle ID = " + cmd[1], Toast.LENGTH_SHORT).show();
 
             } else if (message.contains("ROBOT")) {
                 String[] cmd = message.split(",");
