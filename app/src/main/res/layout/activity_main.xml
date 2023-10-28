@@ -7,8 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
-
     <TextView
         android:id="@+id/headerTitle"
         android:layout_width="match_parent"
@@ -19,27 +17,25 @@
         android:textStyle="bold"
         android:background="@color/headerBg"
         android:gravity="center"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText" />
 
-
     <view
         android:id="@+id/mapView"
         class="com.example.mdp_group18.GridMap"
-        android:layout_width="430dp"
-        android:layout_height="430dp"
+        android:layout_width="470dp"
+        android:layout_height="470dp"
         android:layout_margin="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/headerTitle" />
 
     <TextView
         android:id="@+id/bluetoothHeader"
-        android:layout_width="120dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="80dp"
         android:text="Bluetooth"
         android:textAlignment="center"
         android:textAllCaps="true"
@@ -47,18 +43,17 @@
         android:background="@drawable/rounded_rect"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/mapView"
-        app:layout_constraintTop_toBottomOf="@id/headerTitle"
-        app:layout_constraintBottom_toTopOf="@id/bluetoothContent"/>
+        app:layout_constraintTop_toBottomOf="@id/headerTitle" />
 
     <View
         android:id="@+id/bluetoothContent"
-        android:layout_width="120dp"
+        android:layout_width="100dp"
         android:layout_height="60dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintTop_toBottomOf="@id/bluetoothHeader"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/mapView"
-        app:layout_constraintBottom_toTopOf="@id/robotStatusHeader"
+
         android:background="@drawable/textview_border" />
 
     <TextView
@@ -86,87 +81,55 @@
         app:layout_constraintTop_toBottomOf="@id/bluetoothStatusText" />
 
     <TextView
-        android:id="@+id/robotStatusHeader"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Robot Status"
-        android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textStyle="bold"
-        android:background="@drawable/rounded_rect"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/mapView"
-        app:layout_constraintTop_toBottomOf="@id/bluetoothContent"
-        app:layout_constraintBottom_toTopOf="@id/robotStatus"/>
-
-    <TextView
-        android:id="@+id/robotStatus"
-        android:layout_width="120dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="2dp"
-        android:background="@drawable/textview_border"
-        app:layout_constraintTop_toBottomOf="@id/robotStatusHeader"
-        app:layout_constraintStart_toEndOf="@id/mapView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/directionHeader"
-        android:text="@string/robot_status"
-        android:textAlignment="center"
-        android:gravity="center" />
-
-    <TextView
         android:id="@+id/directionHeader"
-        android:layout_width="120dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:text="Direction"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textStyle="bold"
         android:background="@drawable/rounded_rect"
+        android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/mapView"
-        app:layout_constraintTop_toBottomOf="@id/robotStatus"
-        app:layout_constraintBottom_toTopOf="@id/directionText"/>
+        app:layout_constraintTop_toBottomOf="@id/bluetoothContent"
+        />
 
     <TextView
         android:id="@+id/directionText"
-        android:layout_width="120dp"
+        android:layout_width="100dp"
         android:layout_height="60dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="5dp"
         android:background="@drawable/textview_border"
         app:layout_constraintTop_toBottomOf="@id/directionHeader"
         app:layout_constraintStart_toEndOf="@id/mapView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/coordinatesHeader"
         android:text="@string/directionText"
         android:textAlignment="center"
         android:gravity="center" />
 
     <TextView
         android:id="@+id/coordinatesHeader"
-        android:layout_width="120dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Coordinates"
+        android:background="@drawable/rounded_rect"
+        android:text="Location"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textStyle="bold"
-        android:background="@drawable/rounded_rect"
+        android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/mapView"
-        app:layout_constraintTop_toBottomOf="@id/directionText"
-        app:layout_constraintBottom_toTopOf="@id/coordinatesContent"/>
+        app:layout_constraintTop_toBottomOf="@id/directionText" />
 
     <View
         android:id="@+id/coordinatesContent"
-        android:layout_width="120dp"
+        android:layout_width="100dp"
         android:layout_height="60dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintTop_toBottomOf="@id/coordinatesHeader"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/mapView"
-        app:layout_constraintBottom_toBottomOf="@id/mapView"
         android:background="@drawable/textview_border" />
 
     <TextView
@@ -197,13 +160,13 @@
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager"
-        android:layout_width="430dp"
-        android:layout_height="430dp"
+        android:layout_width="420dp"
+        android:layout_height="400dp"
         android:layout_margin="10dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintStart_toStartOf="@id/mapView"
-        app:layout_constraintEnd_toEndOf="@id/mapView"
-        app:layout_constraintTop_toBottomOf="@id/mapView">
+        app:layout_constraintTop_toBottomOf="@id/mapView"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
@@ -226,7 +189,7 @@
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="@id/viewPager"
         app:layout_constraintBottom_toTopOf="@id/resetExplorationBtn"
-        app:layout_constraintStart_toEndOf="@id/mapView"
+        app:layout_constraintStart_toEndOf="@id/viewPager"
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageButton
@@ -306,23 +269,23 @@
         android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:text="Exploration Setup"
-        android:textSize="10dp"
+        android:textSize="10sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/startFastestCarBtn"
-        app:layout_constraintStart_toEndOf="@id/viewPager"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintStart_toStartOf="@id/bluetoothButtonContent"
+        app:layout_constraintEnd_toEndOf="@id/bluetoothButtonContent"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/startFastestCarBtn"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:text="Start Fastest Car"
-        android:textSize="10dp"
+        android:textSize="10sp"
         android:textStyle="bold"
         android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toTopOf="@id/bluetoothButton"
-        app:layout_constraintStart_toEndOf="@id/viewPager"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintStart_toStartOf="@id/bluetoothButtonContent"
+        app:layout_constraintEnd_toEndOf="@id/bluetoothButtonContent"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/bluetoothButton"
@@ -336,8 +299,8 @@
         android:textColor="@color/white"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/viewPager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/viewPager" />
+        app:layout_constraintEnd_toEndOf="@id/bluetoothButtonContent"
+        app:layout_constraintStart_toStartOf="@id/bluetoothButtonContent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -87,15 +87,6 @@ public class BluetoothChatTabFragment extends Fragment {
     }
 
     /**
-     * Returns the text view for displaying received messages.
-     *
-     * @return the text view for displaying received messages.
-     */
-    public TextView getMessageReceivedTextView() {
-        return this.messageReceivedTextView;
-    }
-
-    /**
      * The broadcast receiver for incoming messages.
      */
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {

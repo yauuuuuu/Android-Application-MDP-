@@ -86,8 +86,6 @@ public class GridMap extends View {
     private final Paint greenPaint = new Paint();
     private final Paint obstacleColor = new Paint();
     private final Paint tileColor = new Paint();
-    private final Paint coordHelperColor = new Paint();
-    private final Paint coordHelperColor2 = new Paint();
     private String robotDirection = "None";
     public static double robotBearing = 90;
     private int[] startCoord;
@@ -125,8 +123,6 @@ public class GridMap extends View {
         this.greenPaint.setColor(getResources().getColor(R.color.grassColor));
         this.greenPaint.setStrokeWidth(8);
         this.obstacleColor.setColor(getResources().getColor(R.color.rockColor));
-        this.coordHelperColor.setColor(getResources().getColor(R.color.niceBlue));
-        this.coordHelperColor.setColor(getResources().getColor(R.color.betterBlue));
         this.tileColor.setColor(getResources().getColor(R.color.tileColor));
         this.startCoord = new int[]{-1, -1};
         this.curCoord = new int[]{-1, -1};
@@ -202,39 +198,14 @@ public class GridMap extends View {
         // y starts from 1 since 1st column is used for index labels
         for (int x = 1; x <= COL; x++) {
             for (int y = 0; y < ROW; y++) {
-                if (greyShadow[0] == x && greyShadow[1] == y) {
-                    canvas.drawRect(
-                            cells[x][y].startX,
-                            cells[x][y].startY,
-                            cells[x][y].endX,
-                            cells[x][y].endY,
-                            coordHelperColor2
-                    );
-                } else if (greyShadow[0] == x && greyShadow[1] < y) {
-                    canvas.drawRect(
-                            cells[x][y].startX,
-                            cells[x][y].startY,
-                            cells[x][y].endX,
-                            cells[x][y].endY,
-                            coordHelperColor
-                    );
-                } else if (greyShadow[1] == y && greyShadow[0] > x) {
-                    canvas.drawRect(
-                            cells[x][y].startX,
-                            cells[x][y].startY,
-                            cells[x][y].endX,
-                            cells[x][y].endY,
-                            coordHelperColor
-                    );
-                } else {
-                    canvas.drawRect(
-                            cells[x][y].startX,
-                            cells[x][y].startY,
-                            cells[x][y].endX,
-                            cells[x][y].endY,
-                            cells[x][y].paint
-                    );
-                }
+
+                canvas.drawRect(
+                        cells[x][y].startX,
+                        cells[x][y].startY,
+                        cells[x][y].endX,
+                        cells[x][y].endY,
+                        cells[x][y].paint
+                );
             }
         }
     }
@@ -368,7 +339,9 @@ public class GridMap extends View {
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 20; j++) {
                 String displayedText;
+
                 if (! IMAGE_LIST[19 - i][j].equals("")) {
+
                     displayedText = IMAGE_LIST[19 - i][j];
                     textPaint.setTextSize(17);
                     canvas.drawText(
@@ -377,9 +350,22 @@ public class GridMap extends View {
                             cells[j + 1][i].startY + ((cells[1][1].endY - cells[1][1].startY) / 2) + 10,
                             textPaint
                     );
+                    /*
+                    float xCoord = cells[j + 1][19 - i].startX ;
+                    float yCoord = cells[j + 1][i].startY ;
+
+                    BitmapFactory.Options op = new BitmapFactory.Options();
+                    Bitmap bm, mapscalable;
+
+                    bm = BitmapFactory.decodeResource(getResources(),R.drawable.happy_cat, op);
+                    mapscalable = Bitmap.createScaledBitmap(bm, 25,30, true);
+                    canvas.drawBitmap(mapscalable, xCoord, yCoord, null);
+
+                     */
                 }
                 else {
                     displayedText = OBSTACLE_LIST[19 - i][j];
+
                     textPaint.setTextSize(11);
                     canvas.drawText(
                             displayedText,
@@ -387,6 +373,22 @@ public class GridMap extends View {
                             cells[j + 1][i].startY + ((cells[1][1].endY - cells[1][1].startY) / 2) + 10,
                             textPaint
                     );
+
+
+                    /*
+                    if (displayedText != ""){
+                        float xCoord = cells[j + 1][19 - i].startX ;
+                        float yCoord = cells[j + 1][i].startY ;
+
+                        BitmapFactory.Options op = new BitmapFactory.Options();
+                        Bitmap bm, mapscalable;
+
+                        bm = BitmapFactory.decodeResource(getResources(),R.drawable.sad_cat, op);
+                        mapscalable = Bitmap.createScaledBitmap(bm, 25,30, true);
+                        canvas.drawBitmap(mapscalable, xCoord, yCoord, null);
+                    }
+
+                     */
                 }
 
                     // color the face direction
@@ -454,15 +456,6 @@ public class GridMap extends View {
         return startCoordStatus;
     }
 
-    public void setCoordHelper(int x, int y){
-        greyShadow[0] = x-1;
-        greyShadow[1] = y;
-    }
-    public void cancelCoordHelper(){
-        greyShadow[0] = -1;
-        greyShadow[1] = -1;
-    }
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -473,9 +466,6 @@ public class GridMap extends View {
             String obstacleBearing;
             ToggleButton setRobotBtn = ((Activity) this.getContext())
                     .findViewById(R.id.setRobotBtn);
-
-            // Set Map Coord Helper
-            // setCoordHelper(initialColumn, initialRow);
 
             if (MapConfigurationTabFragment.dragStatus) {
                 // if the drag location has no obstacles, do nothing
@@ -608,6 +598,12 @@ public class GridMap extends View {
 
                     obstacleCounter++;
 
+                    Toast.makeText(
+                            this.getContext(),
+                            "Obstacle ID: " + newObstacleID + " placed at location X = " + initialColumn + ", Y = " + initialRow,
+                            Toast.LENGTH_SHORT
+                    ).show();
+
                     /***
                      if (BluetoothConnectionService.mState == BluetoothConnectionService.STATE_CONNECTED){
                      String setObstacleText = "ADD," + newObstacleID + ",(" + initialColumn + "," + initialRow + ")";
@@ -621,17 +617,6 @@ public class GridMap extends View {
             }
             this.invalidate();
         }
-            /*
-        } else if (event.getAction() == MotionEvent.ACTION_MOVE){
-            Log.d(TAG, "action_move");
-            setCoordHelper(initialColumn, initialRow);
-            this.invalidate();
-        } else if (event.getAction() == MotionEvent.ACTION_UP){
-            Log.d(TAG, "action_up");
-            cancelCoordHelper();
-            this.invalidate();
-        }
-             */
         return false;
     }
 
@@ -883,11 +868,8 @@ public class GridMap extends View {
      */
 
     public void resetMap(boolean hardReset) {
-        TextView robotStatusTextView =  ((Activity)this.getContext())
-                .findViewById(R.id.robotStatus);
-        this.updateRobotAxis(0, 0, "None");
-        robotStatusTextView.setText(R.string.status_not_available);
 
+        this.updateRobotAxis(0, 0, "None");
         this.toggleCheckedBtn("None");
         this.setStartCoord(-1, -1);
         this.setCurCoord(-1, -1, "None");
@@ -1069,7 +1051,7 @@ public class GridMap extends View {
         if (BluetoothConnectionService.mState != BluetoothConnectionService.STATE_CONNECTED){
             return false;
         } else{
-            String startFastestText = "startFastest";
+            String startFastestText = "fastest";
             byte[] bytes;
             bytes = startFastestText.getBytes(Charset.defaultCharset());
             BluetoothConnectionService.write(bytes);

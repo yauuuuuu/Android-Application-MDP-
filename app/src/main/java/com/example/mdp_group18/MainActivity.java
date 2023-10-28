@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
     private Button startExplorationBtn, startFastestBtn, resetExplorationBtn;
     private Boolean startExplorationStatus = false;
     private static TextView bluetoothStatus, bluetoothDevice;
-    private TextView robotStatus;
     BluetoothAdapter btAdaptor;
 
     @Override
@@ -97,9 +96,6 @@ public class MainActivity extends AppCompatActivity {
         // Bluetooth Status
         MainActivity.bluetoothStatus = findViewById(R.id.bluetoothStatusText);
         MainActivity.bluetoothDevice = findViewById(R.id.bluetoothConnectedDevices);
-
-        // Robot Status
-        this.robotStatus = findViewById(R.id.robotStatus);
 
         // Set up sharedPreferences
         this.context = getApplicationContext();
@@ -258,16 +254,16 @@ public class MainActivity extends AppCompatActivity {
 
                     switch (this.direction) {
                         case "N":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 4, this.curCoord[1] + 2}, 90, control);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 2, this.curCoord[1] + 2}, 90, control);
                             break;
                         case "W":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 2, this.curCoord[1] - 4}, 90, control);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 2, this.curCoord[1] - 2}, 90, control);
                             break;
                         case "S":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 4, this.curCoord[1] - 2}, 90, control);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 2, this.curCoord[1] - 2}, 90, control);
                             break;
                         case "E":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 2, this.curCoord[1] + 4}, 90, control);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 2, this.curCoord[1] + 2}, 90, control);
                             break;
                     }
                     break;
@@ -276,16 +272,16 @@ public class MainActivity extends AppCompatActivity {
 
                     switch (this.direction) {
                         case "N":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 4, this.curCoord[1] + 2}, -90, control);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 2, this.curCoord[1] + 2}, -90, control);
                             break;
                         case "W":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 2, this.curCoord[1] + 4}, -90, control);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 2, this.curCoord[1] + 2}, -90, control);
                             break;
                         case "S":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 4, this.curCoord[1] - 2}, -90, control);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] - 2, this.curCoord[1] - 2}, -90, control);
                             break;
                         case "E":
-                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 2, this.curCoord[1] - 4}, -90, control);
+                            this.gridMap.moveRobot(new int[]{this.curCoord[0] + 2, this.curCoord[1] - 2}, -90, control);
                             break;
                     }
                     break;
@@ -336,11 +332,14 @@ public class MainActivity extends AppCompatActivity {
      *   ex 1: ROBOT,4,6,N for moving robot to [4,6], facing N
      *   ex 2: ROBOT,6,6,E for moving robot to [6,6], facing E
      *
-     * For updating status of robot:
-     * STATUS,[new status]
+     * For live update of the robot during exploration challenge:
+     * LIVE,[direction]
+     *   ex 1: LIVE,tr for asking robot turn right
+     *   ex 2: LIVE,f for asking robot to move forward
+     *   ex 2: LIVE,r for asking robot to reverse
      *
      * For signaling Android that task is completed
-     * ENDED
+     * EXPLORE/ FASTEST
      */
     BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
@@ -379,10 +378,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
                 gridMap.setCurCoord(xPos,yPos,direction);
-            } else if (message.contains("STATUS")){
-                String[] cmd = message.split(",");
-                String updateStatus =  cmd[1].trim();
-                robotStatus.setText(updateStatus);
             } else if (message.contains("EXPLORE")){
 
                 resetExplorationBtn();
@@ -390,6 +385,24 @@ public class MainActivity extends AppCompatActivity {
             } else if (message.contains("FASTEST")){
                 startFastestBtn.setEnabled(true);
                 startFastestBtn.setText("Start Fastest Car");
+            } else if (message.contains("LIVE")){
+                String[] cmd = message.split(",");
+                String direction = cmd[1].trim();
+
+                switch (direction){
+                    case "f":
+                        moveRobotControl("forward");
+                        break;
+                    case "r":
+                        moveRobotControl("back");
+                        break;
+                    case "tr":
+                        moveRobotControl("right");
+                        break;
+                    case "tl":
+                        moveRobotControl("left");
+                        break;
+                }
             }
         }
     };
